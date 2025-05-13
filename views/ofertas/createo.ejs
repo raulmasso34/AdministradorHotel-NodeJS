@@ -1,149 +1,354 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <!--Usamos boxicons-->
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <title>Ofertas</title>  
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/logout"><i class="fa-solid fa-right-from-bracket"></i></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/clientes">CLIENTES</a>
-            </li>
-         
-            <li class="nav-item">
-              <% if (user && user.role === 'Hotel') { %>
-                <a class="nav-link active" href="/hotel/<%= user.id_hotel %>">HOTEL</a>
-            <% } else if (user && user.role === 'General') { %>
-              <a class="nav-link active" href="/hoteles">HOTEL</a> %>
-            <% } %>
-            </li>
-            <li class="nav-item">
-              <% if (user && user.role === 'Hotel') { %>
-                <a class="nav-link active" href="/oferta/<%= user.id_hotel %>">OFERTAS</a>
-            <% } else if (user && user.role === 'General') { %>
-              <a class="nav-link active" href="/ofertas">OFERTAS</a> %>
-            <% } %>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/actividades/">ACTIVIDADES</a>
-            </li>
-            <li class="nav-item active">
-              <a class="nav-link active" href="/servicio/">SERVICIO</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/tarifa/">TARIFA</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/pais/">PAIS</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/reservas/">RESERVAS</a>
-            </li>
-          </ul>
-          <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-          </form>
-        </div>
-      </div>
-    </nav>
-
-      <div class="container mt-4">
-        <div class="card border-secondary">
-            <div class="card-header">Nuevo Registro</div>
-            <div class="card-body">
-                  <form action="/saveo" method="POST">
-                    <div class="mb-3">
-                        <label for="Nombre" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="Nombre" name="Nombre" tabindex="1">
-                    </div>
-                    <div class="mb-3">
-                        <label for="Descripcion" class="form-label">Descripcion</label>
-                        <input type="text" class="form-control" id="Descripcion" name="Descripcion" tabindex="1">
-                    </div>
-                    <div class="mb-3">
-                        <label for="Tipo" class="form-label">Tipo</label>
-                        <input type="text" class="form-control" id="Tipo" name="Tipo" tabindex="1">
-                    </div>
-                    <div class="mb-3">
-                        <label for="Dia_Inicio" class="form-label">Dia Inicio</label>
-                        <input type="date" class="form-control" id="Dia_Inicio" name="Dia_Inicio" tabindex="1">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="Dia_Fin" class="form-label">Dia Fin</label>
-                        <input type="date" class="form-control" id="Dia_Fin" name="Dia_Fin" tabindex="1">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="Precio_Original" class="form-label">Precio Original</label>
-                        <input type="text" class="form-control" id="Precio_Original" name="Precio_Original" tabindex="1">
-                    </div>
-                    <div class="mb-3">
-                        <label for="Precio_Oferta" class="form-label">Precio Oferta</label>
-                        <input type="text" class="form-control" id="Precio_Oferta" name="Precio_Oferta" tabindex="1">
-                    </div>
-                    <div class="mb-3">
-                        <label for="Estado" class="form-label">Estado</label>
-                        <select name="Estado" id="Estado" class="form-select" aria-label="Elige una de las opciones">
-                          <option value="1">Activo</option>
-                          <option value="0">Inactivo</option>
-                        </select>
-                      </div> 
-                      <div class="mb-3">
-                        <label for="Id_Hotel" class="form-label">Hotel</label>
-                        <select name="Id_Hotel" id="Id_Hotel" class="form-select" aria-label="Elige una de las opciones">
-                          <% hoteles.forEach(hotel => { %>
-                            <option value="<%= hotel.Id_Hotel %>"><%= hotel.Nombre%></option>
-                          <% }); %>
-                        </select>
-                      </div> 
-                      <div class="mb-3">
-                        <label for="Id_Habitacion" class="form-label">Numero Habitacion</label>
-                        <select name="Id_Habitacion" id="Id_Habitacion" class="form-select" aria-label="Elige una de las opciones">
-                            <option value="" selected>No Habitacion</option> 
-                          <% habitaciones.forEach(Habitacion => { %>
-                            <option value="<%= Habitacion.Id_Habitaciones %>"><%= Habitacion.Numero_Habitacion %></option>
-                          <% }); %>
-                        </select>
-                      </div> 
-                      <div class="mb-3">
-                        <label for="Id_Actividad" class="form-label">Actividad</label>
-                        <select name="Id_Actividad" id="Id_Actividad" class="form-select" aria-label="Elige una de las opciones">
-                            <option value="" selected>Sin actividad</option> <!-- Opción nula -->
-                            <% actividades.forEach(actividad => { %>
-                                <option value="<%= actividad.Id_Actividades %>"><%= actividad.Actividad %></option>
-                            <% }); %>
-                        </select>
-                        
-                      </div> 
-                   <button type="submit" class="btn btn-primary" tabindex="5">Guardar</button>
-                      <% if (user && user.role === 'Hotel') { %>
-                  <a class="btn btn-secondary" href="/oferta/<%= user.id_hotel %>">Cancelar</a>
-              <% } else if (user && user.role === 'General') { %>
-                <a href="/ofertas/" class="btn btn-secondary">Cancelar</a>
-              <% } %>
-                </form>
-            </div>
-        </div>
-      </div>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <!-- BoxIcons -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  
+  <!-- CSS personalizado -->
+  <link rel="stylesheet" href="/static/css/formularios.css">
+  
+  <title>Nueva Oferta</title>
+</head>
+<body>
+  <div class="container mt-4">
+    <!-- Formulario de Nueva Oferta -->
+    <div class="card border-secondary mb-5">
+      <div class="card-header">
+        <i class='bx bx-tag-alt me-2'></i> Nueva Oferta
+      </div>
+      <div class="card-body">
+        <form action="/saveo" method="POST" id="ofertaForm">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Nombre" class="form-label required-field">Nombre de la Oferta</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-purchase-tag'></i></span>
+                <input type="text" class="form-control" id="Nombre" name="Nombre" required placeholder="Ej: Oferta Verano, Escapada Romántica...">
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Tipo" class="form-label required-field">Tipo de Oferta</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-category'></i></span>
+                <input type="text" class="form-control" id="Tipo" name="Tipo" required placeholder="Ej: Temporada, Paquete, Especial...">
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="Descripcion" class="form-label required-field">Descripción</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class='bx bx-text'></i></span>
+              <textarea class="form-control" id="Descripcion" name="Descripcion" required rows="3" placeholder="Describe detalladamente la oferta..."></textarea>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Dia_Inicio" class="form-label required-field">Fecha de Inicio</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-calendar'></i></span>
+                <input type="date" class="form-control" id="Dia_Inicio" name="Dia_Inicio" required>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Dia_Fin" class="form-label required-field">Fecha de Fin</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-calendar-check'></i></span>
+                <input type="date" class="form-control" id="Dia_Fin" name="Dia_Fin" required>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Precio_Original" class="form-label required-field">Precio Original</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-euro'></i></span>
+                <input type="number" class="form-control" id="Precio_Original" name="Precio_Original" required step="0.01" min="0" placeholder="0.00">
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Precio_Oferta" class="form-label required-field">Precio Oferta</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-purchase-tag-alt'></i></span>
+                <input type="number" class="form-control" id="Precio_Oferta" name="Precio_Oferta" required step="0.01" min="0" placeholder="0.00">
+              </div>
+              <div id="precioHelper" class="form-text text-end">Descuento: <span id="descuentoCalculado">0%</span></div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Estado" class="form-label required-field">Estado</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-toggle-right'></i></span>
+                <select name="Estado" id="Estado" class="form-select" required>
+                  <option value="1" selected>Activo</option>
+                  <option value="0">Inactivo</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Id_Hotel" class="form-label required-field">Hotel</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-hotel'></i></span>
+                <select name="Id_Hotel" id="Id_Hotel" class="form-select" required>
+                  <option value="" selected disabled>Selecciona un hotel</option>
+                  <% hoteles.forEach(hotel => { %>
+                    <option value="<%= hotel.Id_Hotel %>"><%= hotel.Nombre %></option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Id_Habitacion" class="form-label">Habitación (Opcional)</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-bed'></i></span>
+                <select name="Id_Habitacion" id="Id_Habitacion" class="form-select">
+                  <option value="" selected>Sin habitación específica</option>
+                  <% habitaciones.forEach(Habitacion => { %>
+                    <option value="<%= Habitacion.Id_Habitaciones %>"><%= Habitacion.Numero_Habitacion %></option>
+                  <% }); %>
+                </select>
+              </div>
+              <div class="form-text">Deja en blanco si la oferta aplica a todas las habitaciones</div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Id_Actividad" class="form-label">Actividad (Opcional)</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-calendar-event'></i></span>
+                <select name="Id_Actividad" id="Id_Actividad" class="form-select">
+                  <option value="" selected>Sin actividad</option>
+                  <% actividades.forEach(actividad => { %>
+                    <option value="<%= actividad.Id_Actividades %>"><%= actividad.Actividad %></option>
+                  <% }); %>
+                </select>
+              </div>
+              <div class="form-text">Selecciona una actividad si la oferta la incluye</div>
+            </div>
+          </div>
+          
+          <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class='bx bx-save me-1'></i> Guardar Oferta
+            </button>
+            <% if (user && user.role === 'Hotel') { %>
+              <a class="btn btn-secondary" href="/oferta/<%= user.id_hotel %>">
+                <i class='bx bx-arrow-back me-1'></i> Cancelar
+              </a>
+            <% } else if (user && user.role === 'General') { %>
+              <a href="/ofertas/" class="btn btn-secondary">
+                <i class='bx bx-arrow-back me-1'></i> Cancelar
+              </a>
+            <% } %>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Botón para cambiar tema -->
+  <button class="theme-toggle" id="themeToggle">
+    <i class='bx bx-moon'></i>
+  </button>
 
-   
-  </body>
+  <!-- Bootstrap Bundle con Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  
+  <!-- Script personalizado -->
+  <script>
+    // Theme toggle
+    document.getElementById('themeToggle').addEventListener('click', function() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      // Cambiar el icono
+      this.querySelector('i').classList.toggle('bx-moon');
+      this.querySelector('i').classList.toggle('bx-sun');
+      
+      // Guardar preferencia en localStorage
+      localStorage.setItem('theme', newTheme);
+    });
+    
+    // Cargar tema guardado
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      
+      // Actualizar icono según tema
+      if (savedTheme === 'dark') {
+        document.querySelector('#themeToggle i').classList.remove('bx-moon');
+        document.querySelector('#themeToggle i').classList.add('bx-sun');
+      }
+      
+      // Establecer fecha mínima (hoy) para los campos de fecha
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('Dia_Inicio').setAttribute('min', today);
+      document.getElementById('Dia_Fin').setAttribute('min', today);
+      
+      // Actualizar fecha mínima de fin cuando cambia la fecha de inicio
+      document.getElementById('Dia_Inicio').addEventListener('change', function() {
+        document.getElementById('Dia_Fin').setAttribute('min', this.value);
+      });
+      
+      // Calcular descuento automáticamente
+      const precioOriginalInput = document.getElementById('Precio_Original');
+      const precioOfertaInput = document.getElementById('Precio_Oferta');
+      const descuentoSpan = document.getElementById('descuentoCalculado');
+      
+      function calcularDescuento() {
+        const precioOriginal = parseFloat(precioOriginalInput.value);
+        const precioOferta = parseFloat(precioOfertaInput.value);
+        
+        if (!isNaN(precioOriginal) && !isNaN(precioOferta) && precioOriginal > 0) {
+          const descuento = ((precioOriginal - precioOferta) / precioOriginal) * 100;
+          descuentoSpan.textContent = descuento.toFixed(2) + '%';
+          
+          // Cambiar color según el descuento
+          if (descuento <= 0) {
+            descuentoSpan.style.color = '#ef4444'; // Rojo si no hay descuento o es negativo
+          } else if (descuento > 50) {
+            descuentoSpan.style.color = '#22c55e'; // Verde si es un gran descuento
+          } else {
+            descuentoSpan.style.color = '#f59e0b'; // Amarillo para descuentos normales
+          }
+        } else {
+          descuentoSpan.textContent = '0%';
+          descuentoSpan.style.color = '';
+        }
+      }
+      
+      precioOriginalInput.addEventListener('input', calcularDescuento);
+      precioOfertaInput.addEventListener('input', calcularDescuento);
+      
+      // Validación básica del formulario
+      const form = document.getElementById('ofertaForm');
+      form.addEventListener('submit', function(event) {
+        let valid = true;
+        const requiredInputs = document.querySelectorAll('input[required], select[required], textarea[required]');
+        
+        requiredInputs.forEach(input => {
+          if (!input.value.trim()) {
+            valid = false;
+            input.classList.add('is-invalid');
+            
+            // Crear mensaje de error si no existe
+            if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('invalid-feedback')) {
+              const feedback = document.createElement('div');
+              feedback.classList.add('invalid-feedback');
+              feedback.textContent = 'Este campo es obligatorio';
+              input.parentNode.appendChild(feedback);
+            }
+          } else {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+          }
+        });
+        
+        // Validación específica para fechas
+        const diaInicio = new Date(document.getElementById('Dia_Inicio').value);
+        const diaFin = new Date(document.getElementById('Dia_Fin').value);
+        
+        if (diaInicio > diaFin) {
+          valid = false;
+          const diaFinInput = document.getElementById('Dia_Fin');
+          diaFinInput.classList.add('is-invalid');
+          
+          // Crear mensaje de error específico para fecha
+          if (!diaFinInput.nextElementSibling || !diaFinInput.nextElementSibling.classList.contains('invalid-feedback')) {
+            const feedback = document.createElement('div');
+            feedback.classList.add('invalid-feedback');
+            feedback.textContent = 'La fecha de fin no puede ser anterior a la fecha de inicio';
+            diaFinInput.parentNode.appendChild(feedback);
+          }
+        }
+        
+        // Validación para precios
+        const precioOriginal = parseFloat(precioOriginalInput.value);
+        const precioOferta = parseFloat(precioOfertaInput.value);
+        
+        if (isNaN(precioOriginal) || precioOriginal <= 0) {
+          valid = false;
+          precioOriginalInput.classList.add('is-invalid');
+          
+          // Crear mensaje de error para precio original
+          if (!precioOriginalInput.nextElementSibling || !precioOriginalInput.nextElementSibling.classList.contains('invalid-feedback')) {
+            const feedback = document.createElement('div');
+            feedback.classList.add('invalid-feedback');
+            feedback.textContent = 'El precio original debe ser mayor que cero';
+            precioOriginalInput.parentNode.appendChild(feedback);
+          }
+        }
+        
+        if (isNaN(precioOferta) || precioOferta <= 0) {
+          valid = false;
+          precioOfertaInput.classList.add('is-invalid');
+          
+          // Crear mensaje de error para precio oferta
+          if (!precioOfertaInput.nextElementSibling || !precioOfertaInput.nextElementSibling.classList.contains('invalid-feedback')) {
+            const feedback = document.createElement('div');
+            feedback.classList.add('invalid-feedback');
+            feedback.textContent = 'El precio de oferta debe ser mayor que cero';
+            precioOfertaInput.parentNode.appendChild(feedback);
+          }
+        } else if (precioOferta >= precioOriginal) {
+          valid = false;
+          precioOfertaInput.classList.add('is-invalid');
+          
+          // Crear mensaje de error para precio oferta mayor que original
+          if (!precioOfertaInput.nextElementSibling || !precioOfertaInput.nextElementSibling.classList.contains('invalid-feedback')) {
+            const feedback = document.createElement('div');
+            feedback.classList.add('invalid-feedback');
+            feedback.textContent = 'El precio de oferta debe ser menor que el precio original';
+            precioOfertaInput.parentNode.appendChild(feedback);
+          }
+        }
+        
+        if (!valid) {
+          event.preventDefault();
+        }
+      });
+      
+      // Eliminar clases de validación cuando se modifica el campo
+      const inputs = document.querySelectorAll('input, select, textarea');
+      inputs.forEach(input => {
+        input.addEventListener('input', function() {
+          this.classList.remove('is-invalid');
+          if (this.value.trim()) {
+            this.classList.add('is-valid');
+          }
+        });
+      });
+      
+      // Formateador de precios
+      const formatearPrecio = (input) => {
+        input.addEventListener('blur', function() {
+          if (this.value && !isNaN(this.value)) {
+            this.value = parseFloat(this.value).toFixed(2);
+          }
+        });
+      };
+      
+      formatearPrecio(precioOriginalInput);
+      formatearPrecio(precioOfertaInput);
+    });
+  </script>
+</body>
 </html>

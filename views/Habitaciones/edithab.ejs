@@ -1,70 +1,197 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <!--Usamos boxicons-->
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="../static/css/habitaciones/edithab.css">
-    <title>Habitaciones</title>  
-  </head>
-  <body>
-   
-
-      <% if (habitacion) { %>
-        <div class="container mt-4">
-          <div class="card border-secondary">
-            <div class="card-header">EDITAR</div>
-            <div class="card-body">
-              <form action="/updatehab" method="POST">
-                <input type="hidden" id="Id_Habitaciones" name="Id_Habitaciones" value="<%= habitacion.Id_Habitaciones %>">
-                <div class="mb-3">
-                  <label for="Numero_Habitacion" class="form-label">Numero_Habitacion</label>
-                  <input type="number" class="form-control" id="Numero_Habitacion" name="Numero_Habitacion" tabindex="1" value="<%= habitacion.Numero_Habitacion %>">
-                </div>
-                <div class="mb-3">
-                  <label for="Tipo" class="form-label">Tipo</label>
-                  <select name="Tipo" id="Tipo" class="form-select" aria-label="Elige una de las opciones">
-                    <option <%= habitacion.Tipo == 'Individual' ? "Selected" : '' %>  value="Individual"> Individual</option>
-                    <option <%= habitacion.Tipo == 'Doble' ? "Selected" : '' %>  value="Doble">Doble</option>
-                    <option  <%= habitacion.Tipo == 'Suite' ? "Selected" : '' %>  value="Suite">Suite</option>
-                 </select>
-                </div>
-                <div class="mb-3">
-                  <label for="Capacidad" class="form-label">Capacidad</label>
-                  <input type="number" class="form-control" id="Capacidad" name="Capacidad" tabindex="1" value="<%= habitacion.Capacidad %>">
-                </div>
-                <div class="mb-3">
-                  <label for="Precio" class="form-label">Precio</label>
-                  <input type="number" class="form-control" id="Precio" name="Precio" tabindex="1" value="<%= habitacion.Precio %>">
-                </div>
-           
-                
-                <div class="mb-3">
-                  <label for="Id_Hotel" class="form-label">Hotel</label>
-                  <select name="Id_Hotel" id="Id_Hotel" class="form-select">
-                    <% hoteles.forEach(hotel => { %>
-                      <option value="<%= hotel.Id_Hotel %>" <%= hotel.Id_Hotel === hotel.Id_Hotel ? 'selected' : '' %>>
-                        <%= hotel.Nombre %>
-                      </option>
-                    <% }); %>
-                  </select>
-                </div>
-                <button type="submit" class="btn btn-primary" tabindex="5">Guardar</button>
-                <a href="/habitaciones/<%= habitacion.Id_Hotel %>" class="btn btn-secondary">Cancelar</a>
-
-              </form>
+<html lang="es" data-theme="light">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <!-- BoxIcons -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="/static/css/formularios.css">
+  <title>Habitaciones</title>
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="card border-secondary mb-5">
+      <div class="card-header">
+        <i class='bx bx-plus-circle me-2'></i> Nueva Habitación
+      </div>
+      <div class="card-body">
+        <form action="/savehab" method="POST">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Numero_Habitacion" class="form-label required-field">Número Habitación</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-id-card'></i></span>
+                <input type="text" class="form-control" id="Numero_Habitacion" name="Numero_Habitacion" tabindex="1" required>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Tipo" class="form-label required-field">Tipo</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-category'></i></span>
+                <select name="Tipo" id="Tipo" class="form-select" tabindex="2" required>
+                  <option value="Individual">Individual</option>
+                  <option value="Doble">Doble</option>
+                  <option value="Suite">Suite</option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
-      <% } %>
-      
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Capacidad" class="form-label required-field">Capacidad</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-user-plus'></i></span>
+                <input type="text" class="form-control" id="Capacidad" name="Capacidad" tabindex="3" required>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Precio" class="form-label required-field">Precio por noche</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-euro'></i></span>
+                <input type="text" class="form-control" id="Precio" name="Precio" tabindex="4" required>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Id_Hotel" class="form-label required-field">Hotel</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-building-house'></i></span>
+                <select name="Id_Hotel" id="Id_Hotel" class="form-select" tabindex="5" required>
+                  <% hoteles.forEach(hotel => { %>
+                    <option value="<%= hotel.Id_Hotel %>"><%= hotel.Nombre %></option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary" tabindex="6">
+              <i class='bx bx-save me-1'></i> Guardar
+            </button>
+            <a href="/habitaciones/<%= habitacion.Id_Hotel %>" class="btn btn-secondary">
+              <i class='bx bx-arrow-back me-1'></i> Cancelar
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Botón para cambiar tema -->
+  <button class="theme-toggle" id="themeToggle">
+    <i class='bx bx-moon'></i>
+  </button>
 
-   
-  </body>
+  <!-- Bootstrap Bundle con Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  
+  <!-- Script personalizado -->
+  <script>
+    // Theme toggle
+    document.getElementById('themeToggle').addEventListener('click', function() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      // Cambiar el icono
+      this.querySelector('i').classList.toggle('bx-moon');
+      this.querySelector('i').classList.toggle('bx-sun');
+      
+      // Guardar preferencia en localStorage
+      localStorage.setItem('theme', newTheme);
+    });
+    
+    // Cargar tema guardado
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      
+      // Actualizar icono según tema
+      if (savedTheme === 'dark') {
+        document.querySelector('#themeToggle i').classList.remove('bx-moon');
+        document.querySelector('#themeToggle i').classList.add('bx-sun');
+      }
+      
+      // Validación básica del formulario
+      const form = document.querySelector('form');
+      form.addEventListener('submit', function(event) {
+        let valid = true;
+        const requiredInputs = document.querySelectorAll('input[required], select[required]');
+        
+        requiredInputs.forEach(input => {
+          if (!input.value.trim()) {
+            valid = false;
+            input.classList.add('is-invalid');
+            
+            // Crear mensaje de error si no existe
+            if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('invalid-feedback')) {
+              const feedback = document.createElement('div');
+              feedback.classList.add('invalid-feedback');
+              feedback.textContent = 'Este campo es obligatorio';
+              input.parentNode.appendChild(feedback);
+            }
+          } else {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+          }
+        });
+        
+        // Validar que Capacidad sea un número
+        const capacidadInput = document.getElementById('Capacidad');
+        if (capacidadInput.value && isNaN(capacidadInput.value)) {
+          valid = false;
+          capacidadInput.classList.add('is-invalid');
+          
+          // Crear mensaje de error específico
+          if (!capacidadInput.nextElementSibling || !capacidadInput.nextElementSibling.classList.contains('invalid-feedback')) {
+            const feedback = document.createElement('div');
+            feedback.classList.add('invalid-feedback');
+            feedback.textContent = 'La capacidad debe ser un número';
+            capacidadInput.parentNode.appendChild(feedback);
+          }
+        }
+        
+        // Validar que Precio sea un número
+        const precioInput = document.getElementById('Precio');
+        if (precioInput.value && isNaN(precioInput.value)) {
+          valid = false;
+          precioInput.classList.add('is-invalid');
+          
+          // Crear mensaje de error específico
+          if (!precioInput.nextElementSibling || !precioInput.nextElementSibling.classList.contains('invalid-feedback')) {
+            const feedback = document.createElement('div');
+            feedback.classList.add('invalid-feedback');
+            feedback.textContent = 'El precio debe ser un número';
+            precioInput.parentNode.appendChild(feedback);
+          }
+        }
+        
+        if (!valid) {
+          event.preventDefault();
+        }
+      });
+      
+      // Eliminar clases de validación cuando se modifica el campo
+      const inputs = document.querySelectorAll('input, select');
+      inputs.forEach(input => {
+        input.addEventListener('input', function() {
+          this.classList.remove('is-invalid');
+          if (this.value.trim()) {
+            this.classList.add('is-valid');
+          }
+        });
+      });
+    });
+  </script>
+</body>
 </html>

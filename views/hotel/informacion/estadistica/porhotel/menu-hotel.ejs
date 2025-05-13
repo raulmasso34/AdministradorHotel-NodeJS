@@ -1,58 +1,354 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú del Hotel</title>
-    <!-- Enlace a Bootstrap 5 -->
+    <title>Estadísticas del Hotel</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    
+    <!-- BoxIcons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        .btn-custom {
-            width: 50%;         /* Ajuste de ancho */
-            padding: 15px 10px; /* Hace los botones más gruesos */
-            font-size: 1.3rem;  /* Texto más grande */
+        :root {
+            /* Light Theme */
+            --bg-color: #ffffff;
+            --sidebar-bg: #1e3d59;
+            --card-bg: #ffffff;
+            --table-header-bg: #2a3042;
+            --primary-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --accent-color: #60a5fa;
+            --menu-hover: rgba(37, 99, 235, 0.1);
+            --menu-title-color: #8f9bb3;
+            --menu-item-color: #2d3748;
+            --container-bg: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-color: #2d3748;
+            --text-muted: #6b7280;
+            --sidebar-text: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --transition-normal: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme */
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --sidebar-bg: #1e293b;
+            --table-header-bg: #334155;
+            --primary-color: #3b82f6;
+            --secondary-color: #60a5fa;
+            --accent-color: #93c5fd;
+            --menu-hover: rgba(59, 130, 246, 0.1);
+            --menu-title-color: #94a3b8;
+            --menu-item-color: #e2e8f0;
+            --container-bg: #1e293b;
+            --border-color: #475569;
+            --text-color: #f8fafc;
+            --text-muted: #cbd5e1;
+            --sidebar-text: #f1f5f9;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.25), 0 4px 6px -2px rgba(0,0,0,0.15);
+        }
+
+        body {
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: var(--transition-normal);
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            transition: var(--transition-normal);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-title {
+            position: relative;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .card-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .hotel-name {
+            background-color: var(--menu-hover);
+            border-radius: 8px;
+            padding: 8px 16px;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            position: relative;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            display: inline-block;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80%;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .stats-button {
+            position: relative;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto 1rem auto;
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            text-align: left;
+        }
+
+        .stats-button i {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .stats-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: all 0.6s ease;
+        }
+
+        .stats-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+            color: white;
+        }
+
+        .stats-button:hover:before {
+            transform: translateX(100%);
+        }
+
+        .btn-exit {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--sidebar-bg);
+            color: white;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-normal);
+            border: none;
+            z-index: 100;
+            font-size: 1.2rem;
+            text-decoration: none;
+        }
+
+        .btn-exit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15), 0 5px 5px rgba(0, 0, 0, 0.12);
+            background-color: #b91c1c;
+            color: white;
+        }
+
+        /* Toggle Dark/Light Mode */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+            border: none;
+            font-size: 1.2rem;
+            transition: var(--transition-normal);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15), 0 5px 5px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Button Icons */
+        .stats-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .stats-button {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
-<body class="bg-light">
-    <a href="/menu/<%= hotelId %>" class="btn btn-sm btn-danger" title="Exit">
-        <i class="fa-solid fa-right-from-bracket"></i>
+<body>
+    <!-- Botón de salida -->
+    <a href="/menu/<%= hotelId %>" class="btn-exit" title="Volver al menú">
+        <i class="fas fa-arrow-left"></i>
     </a>
+    
     <div class="container mt-5">
-        <div class="card shadow-lg p-4">
-            <h2 class="text-center mb-4">📌 Menú del Hotel</h2>
-            <p class="text-center fs-5"> <strong><%= nombreHotel %></strong></p>
-
-            <!-- Sección de Estadísticas -->
-            <h4 class="text-center mt-3">📊 Estadísticas</h4>
-            <div class="d-grid gap-3">
-                <a href="/estadisticas/Actividades/<%= hotelId %>" class="btn btn-primary btn-lg mx-auto btn-custom">
-                    📈 Estadística de Actividades
+        <div class="card p-4">
+            <div class="text-center">
+                <h1 class="card-title">Panel de Estadísticas</h1>
+                
+                <div class="hotel-name">
+                    <i class="fas fa-hotel me-2"></i>
+                    <%= nombreHotel %>
+                </div>
+                
+                <h4 class="section-title mt-4">
+                    <i class="bx bx-bar-chart-alt-2 me-2"></i>Análisis y Reportes
+                </h4>
+            </div>
+            
+            <div class="mt-4">
+                <a href="/estadisticas/Actividades/<%= hotelId %>" class="stats-button">
+                    <div class="stats-icon"><i class="bx bx-line-chart"></i></div>
+                    <span>Estadística de Actividades</span>
                 </a>
-                <a href="/estadisticas/Reservas-del-mes/<%= hotelId %>" class="btn btn-primary btn-lg mx-auto btn-custom">
-                    📅 Reservas por Mes
+                
+                <a href="/estadisticas/Reservas-del-mes/<%= hotelId %>" class="stats-button">
+                    <div class="stats-icon"><i class="bx bx-calendar"></i></div>
+                    <span>Reservas por Mes</span>
                 </a>
-                <a href="/estadisticas/Todas-las-reservas/<%= hotelId %>" class="btn btn-primary btn-lg mx-auto btn-custom">
-                    📋 Todas las Reservas
+                
+                <a href="/estadisticas/Todas-las-reservas/<%= hotelId %>" class="stats-button">
+                    <div class="stats-icon"><i class="bx bx-list-check"></i></div>
+                    <span>Todas las Reservas</span>
                 </a>
-                <a href="/estadisticas/Servicios/<%= hotelId %>" class="btn btn-primary btn-lg mx-auto btn-custom">
-                    🛎️ Reservas de Servicios
+                
+                <a href="/estadisticas/Servicios/<%= hotelId %>" class="stats-button">
+                    <div class="stats-icon"><i class="bx bx-server"></i></div>
+                    <span>Reservas de Servicios</span>
                 </a>
-                <a href="/estadisticas/Temporadas/<%= hotelId %>" class="btn btn-primary btn-lg mx-auto btn-custom">
-                    ☀️❄️ Temporadas más Vendidas
+                
+                <a href="/estadisticas/Temporadas/<%= hotelId %>" class="stats-button">
+                    <div class="stats-icon"><i class="bx bx-sun"></i></div>
+                    <span>Temporadas más Vendidas</span>
                 </a>
-                <a href="/estadisticas/Habitaciones/<%= hotelId %>" class="btn btn-primary btn-lg mx-auto btn-custom">
-                    🏨 Reservas por Tipo de Habitación
+                
+                <a href="/estadisticas/Habitaciones/<%= hotelId %>" class="stats-button">
+                    <div class="stats-icon"><i class="bx bx-building-house"></i></div>
+                    <span>Reservas por Tipo de Habitación</span>
                 </a>
             </div>
-
-     </div>
+        </div>
     </div>
+    
+    <!-- Botón para cambiar tema -->
+    <button class="theme-toggle" id="themeToggle">
+        <i class="bx bx-moon"></i>
+    </button>
 
-    <!-- Script de Bootstrap (JS opcional) -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    
+    <!-- Script para el cambio de tema -->
+    <script>
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            
+            // Cambiar el icono
+            this.querySelector('i').classList.toggle('bx-moon');
+            this.querySelector('i').classList.toggle('bx-sun');
+            
+            // Guardar preferencia en localStorage
+            localStorage.setItem('theme', newTheme);
+        });
+        
+        // Cargar tema guardado
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            // Actualizar icono según tema
+            if (savedTheme === 'dark') {
+                document.querySelector('#themeToggle i').classList.remove('bx-moon');
+                document.querySelector('#themeToggle i').classList.add('bx-sun');
+            }
+        });
+    </script>
 </body>
 </html>

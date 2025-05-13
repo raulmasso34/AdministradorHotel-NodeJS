@@ -1,177 +1,382 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <!--Usamos boxicons-->
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <title>Clients</title>  
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/logout"><i class="fa-solid fa-right-from-bracket"></i></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/clientes">CLIENTES</a>
-            </li>
-         
-            <li class="nav-item">
-              <% if (user && user.role === 'Hotel') { %>
-                <a class="nav-link active" href="/hotel/<%= user.id_hotel %>">HOTEL</a>
-            <% } else if (user && user.role === 'General') { %>
-              <a class="nav-link active" href="/hoteles">HOTEL</a> %>
-            <% } %>
-            </li>
-            <li class="nav-item">
-              <% if (user && user.role === 'Hotel') { %>
-                <a class="nav-link active" href="/oferta/<%= user.id_hotel %>">OFERTAS</a>
-            <% } else if (user && user.role === 'General') { %>
-              <a class="nav-link active" href="/ofertas">OFERTAS</a> %>
-            <% } %>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/actividades/">ACTIVIDADES</a>
-            </li>
-            <li class="nav-item active">
-              <a class="nav-link active" href="/servicio/">SERVICIO</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/tarifa/">TARIFA</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/pais/">PAIS</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/reservas/">RESERVAS</a>
-            </li>
-          </ul>
-          <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-          </form>
-        </div>
-      </div>
-    </nav>
-
-
-
-      <div class="container mt-4">
-        <div class="card border-secondary">
-            <div class="card-header">Nuevo Registro</div>
-            <div class="card-body">
-                <form action="/save" method="POST">
-                    <div class="mb-3">
-                        <label for="Nom" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="Nom" name="Nom" tabindex="1">
-                    </div>
-                    <div class="mb-3">
-                        <label for="Cognom" class="form-label">Apellido</label>
-                        <input type="text" class="form-control" id="Cognom" name="Cognom" tabindex="1">
-                    </div>
-                    <div class="mb-3">
-                        <label for="DNI" class="form-label">DNI</label>
-                        <input type="text" class="form-control" id="DNI" name="DNI" tabindex="1">
-                    </div>
-                    <div class="mb-3">
-                        <label for="CorreuElectronic" class="form-label">Correo</label>
-                        <input type="text" class="form-control" id="CorreuElectronic" name="CorreuElectronic" tabindex="1">
-                    </div>
-                    <div class="mb-3">
-                        <label for="Telefon" class="form-label">Telefono</label>
-                        <input type="text" class="form-control" id="Telefon" name="Telefon" tabindex="1">
-                    </div>
-                    <div class="mb-3">
-                        <label for="Usuari" class="form-label">Usuario</label>
-                        <input type="text" class="form-control" id="Usuari" name="Usuari" tabindex="1">
-                    </div>
-                    <div class="mb-3">
-                        <label for="Password" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="Password" name="Password" tabindex="1">
-                    </div>
-                    <div class="mb-3">
-                      <label for="Id_Pais" class="form-label">País</label>
-                      <select name="Id_Pais" id="Id_Pais" class="form-select" aria-label="Elige una de las opciones">
-                        <% countries.forEach(country => { %>
-                          <option value="<%= country.Id_Pais %>"><%= country.Pais %></option>
-                        <% }); %>
-                      </select>
-                    </div>                                    
-                    <div class="mb-3 position-relative">
-                      <label for="Ciudad" class="form-label">Ciudad</label>
-                      <input type="text" class="form-control" id="Ciudad" name="Ciudad" autocomplete="off">
-                      <div id="autocomplete-list" class="autocomplete-list list-group"></div>
-                  </div>
-                    <div class="mb-3">
-                        <label for="CodigoPostal" class="form-label">Codigo Postal</label>
-                        <input type="text" class="form-control" id="CodigoPostal" name="CodigoPostal" tabindex="1">
-                    </div>
-                   <button type="submit" class="btn btn-primary" tabindex="5">Guardar</button>
-                <a href="/clientes" class="btn btn-secondary">Cancelar</a>
-                </form>
-            </div>
-        </div>
-      </div>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <!-- BoxIcons -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/formularios.css">
+  
+  <title>Nuevo Cliente</title>
+  
+</head>
+<body>
+  <!-- Formulario de Nuevo Cliente -->
+  <div class="container mt-4">
+    <div class="card border-secondary mb-5">
+      <div class="card-header">
+        <i class='bx bx-plus-circle me-2'></i> Nuevo Cliente
+      </div>
+      <div class="card-body">
+        <form action="/save" method="POST">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Nom" class="form-label required-field">Nombre</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-user'></i></span>
+                <input type="text" class="form-control" id="Nom" name="Nom" tabindex="1" required>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Cognom" class="form-label required-field">Apellido</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-user'></i></span>
+                <input type="text" class="form-control" id="Cognom" name="Cognom" tabindex="2" required>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="DNI" class="form-label required-field">DNI</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-id-card'></i></span>
+                <input type="text" class="form-control" id="DNI" name="DNI" tabindex="3" required>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="CorreuElectronic" class="form-label required-field">Correo Electrónico</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-envelope'></i></span>
+                <input type="email" class="form-control" id="CorreuElectronic" name="CorreuElectronic" tabindex="4" required>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Telefon" class="form-label">Teléfono</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-phone'></i></span>
+                <input type="text" class="form-control" id="Telefon" name="Telefon" tabindex="5">
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Usuari" class="form-label required-field">Usuario</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-user-circle'></i></span>
+                <input type="text" class="form-control" id="Usuari" name="Usuari" tabindex="6" required>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Password" class="form-label required-field">Contraseña</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-lock-alt'></i></span>
+                <input type="password" class="form-control" id="Password" name="Password" tabindex="7" required>
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                  <i class='bx bx-show'></i>
+                </button>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Id_Pais" class="form-label required-field">País</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-globe'></i></span>
+                <select name="Id_Pais" id="Id_Pais" class="form-select" tabindex="8" required>
+                  <% countries.forEach(country => { %>
+                    <option value="<%= country.Id_Pais %>"><%= country.Pais %></option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3 position-relative">
+              <label for="Ciudad" class="form-label">Ciudad</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-building'></i></span>
+                <input type="text" class="form-control" id="Ciudad" name="Ciudad" tabindex="9" autocomplete="off">
+              </div>
+              <div id="autocomplete-list" class="autocomplete-list list-group"></div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="CodigoPostal" class="form-label">Código Postal</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-map-pin'></i></span>
+                <input type="text" class="form-control" id="CodigoPostal" name="CodigoPostal" tabindex="10" maxlength="5">
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary" tabindex="11">
+              <i class='bx bx-save me-1'></i> Guardar
+            </button>
+            <a href="/clientes" class="btn btn-secondary" tabindex="12">
+              <i class='bx bx-arrow-back me-1'></i> Cancelar
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Botón para cambiar tema -->
+  <button class="theme-toggle" id="themeToggle">
+    <i class='bx bx-moon'></i>
+  </button>
 
-   
-    <script>
-      const cityInput = document.getElementById("Ciudad");
-      const autocompleteList = document.getElementById("autocomplete-list");
-
-      let timeout = null; // Para retrasar las peticiones
-
-      cityInput.addEventListener("input", () => {
-          clearTimeout(timeout); // Reiniciar el temporizador
-
-          const query = cityInput.value.trim();
-          if (query.length < 2) {
-              autocompleteList.innerHTML = "";
-              autocompleteList.style.display = "none";
-              return;
+  <!-- Bootstrap Bundle con Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  
+  <!-- Script personalizado -->
+  <script>
+    // Toggle password visibility
+    document.getElementById('togglePassword').addEventListener('click', function() {
+      const passwordField = document.getElementById('Password');
+      const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordField.setAttribute('type', type);
+      
+      // Cambiar el icono
+      this.querySelector('i').classList.toggle('bx-show');
+      this.querySelector('i').classList.toggle('bx-hide');
+    });
+    
+    // Theme toggle
+    document.getElementById('themeToggle').addEventListener('click', function() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      // Cambiar el icono
+      this.querySelector('i').classList.toggle('bx-moon');
+      this.querySelector('i').classList.toggle('bx-sun');
+      
+      // Guardar preferencia en localStorage
+      localStorage.setItem('theme', newTheme);
+    });
+    
+    // Cargar tema guardado
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      
+      // Actualizar icono según tema
+      if (savedTheme === 'dark') {
+        document.querySelector('#themeToggle i').classList.remove('bx-moon');
+        document.querySelector('#themeToggle i').classList.add('bx-sun');
+      }
+      
+      // Validación básica del formulario
+      const form = document.querySelector('form');
+      form.addEventListener('submit', function(event) {
+        let valid = true;
+        const requiredInputs = document.querySelectorAll('input[required], select[required]');
+        
+        requiredInputs.forEach(input => {
+          if (!input.value.trim()) {
+            valid = false;
+            input.classList.add('is-invalid');
+            
+            // Crear mensaje de error si no existe
+            if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('invalid-feedback')) {
+              const feedback = document.createElement('div');
+              feedback.classList.add('invalid-feedback');
+              feedback.textContent = 'Este campo es obligatorio';
+              input.parentNode.appendChild(feedback);
+            }
+          } else {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
           }
-
-          timeout = setTimeout(async () => {
-              try {
-                  const response = await fetch(`http://localhost:3000/autocomplete?q=${query}`);
-                  const cities = await response.json();
-
-                  autocompleteList.innerHTML = "";
-                  if (cities.length > 0) {
-                      autocompleteList.style.display = "block";
-                      cities.forEach(city => {
-                          const item = document.createElement("div");
-                          item.classList.add("autocomplete-item", "list-group-item");
-                          item.textContent = city;
-                          item.addEventListener("click", () => {
-                              cityInput.value = city;
-                              autocompleteList.style.display = "none";
-                          });
-                          autocompleteList.appendChild(item);
-                      });
-                  } else {
-                      autocompleteList.style.display = "none";
-                  }
-              } catch (error) {
-                  console.error("Error en la solicitud:", error);
-              }
-          }, 300); // Espera 300ms antes de hacer la petición
-      });
-
-      document.addEventListener("click", (event) => {
-          if (!event.target.closest(".position-relative")) {
-              autocompleteList.style.display = "none";
+        });
+        
+        // Validar correo electrónico
+        const emailInput = document.getElementById('CorreuElectronic');
+        if (emailInput.value && !validateEmail(emailInput.value)) {
+          valid = false;
+          emailInput.classList.add('is-invalid');
+          
+          // Crear mensaje de error específico para email
+          if (!emailInput.nextElementSibling || !emailInput.nextElementSibling.classList.contains('invalid-feedback')) {
+            const feedback = document.createElement('div');
+            feedback.classList.add('invalid-feedback');
+            feedback.textContent = 'Por favor, introduce un correo electrónico válido';
+            emailInput.parentNode.appendChild(feedback);
           }
+        }
+        
+        if (!valid) {
+          event.preventDefault();
+        }
       });
+      
+      // Eliminar clases de validación cuando se modifica el campo
+      const inputs = document.querySelectorAll('input, select');
+      inputs.forEach(input => {
+        input.addEventListener('input', function() {
+          this.classList.remove('is-invalid');
+          if (this.value.trim()) {
+            this.classList.add('is-valid');
+          }
+        });
+      });
+    });
+    
+    // Validar formato de correo electrónico
+    function validateEmail(email) {
+      const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email.toLowerCase());
+    }
+    
+    // Validar DNI español (formato: 12345678X)
+    document.getElementById('DNI').addEventListener('input', function() {
+      const dniValue = this.value.trim();
+      if (dniValue && !validateDNI(dniValue)) {
+        this.classList.add('is-invalid');
+        
+        // Crear mensaje de error si no existe
+        if (!this.nextElementSibling || !this.nextElementSibling.classList.contains('invalid-feedback')) {
+          const feedback = document.createElement('div');
+          feedback.classList.add('invalid-feedback');
+          feedback.textContent = 'Por favor, introduce un DNI válido (formato: 12345678X)';
+          this.parentNode.appendChild(feedback);
+        }
+      } else if (dniValue) {
+        this.classList.remove('is-invalid');
+        this.classList.add('is-valid');
+      }
+    });
+    
+    // Validación de DNI español
+    function validateDNI(dni) {
+      const dniRegex = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKE]$/i;
+      if (!dniRegex.test(dni)) return false;
+      
+      // Extraer número y letra
+      const numero = dni.substr(0, 8);
+      const letra = dni.substr(8, 1).toUpperCase();
+      
+      // Calcular letra esperada
+      const letras = 'TRWAGMYFPDXBNJZSQVHLCKE';
+      const letraEsperada = letras.charAt(numero % 23);
+      
+      return letra === letraEsperada;
+    }
+    
+    // Validar código postal español (5 dígitos)
+    document.getElementById('CodigoPostal').addEventListener('input', function() {
+      const cpValue = this.value.trim();
+      if (cpValue && !validatePostalCode(cpValue)) {
+        this.classList.add('is-invalid');
+        
+        // Crear mensaje de error si no existe
+        if (!this.nextElementSibling || !this.nextElementSibling.classList.contains('invalid-feedback')) {
+          const feedback = document.createElement('div');
+          feedback.classList.add('invalid-feedback');
+          feedback.textContent = 'Por favor, introduce un código postal válido (5 dígitos)';
+          this.parentNode.appendChild(feedback);
+        }
+      } else if (cpValue) {
+        this.classList.remove('is-invalid');
+        this.classList.add('is-valid');
+      }
+    });
+    
+    // Validación de código postal español
+    function validatePostalCode(cp) {
+      return /^[0-9]{5}$/.test(cp);
+    }
+    
+    // Validar teléfono español
+    document.getElementById('Telefon').addEventListener('input', function() {
+      const phoneValue = this.value.trim();
+      if (phoneValue && !validatePhone(phoneValue)) {
+        this.classList.add('is-invalid');
+        
+        // Crear mensaje de error si no existe
+        if (!this.nextElementSibling || !this.nextElementSibling.classList.contains('invalid-feedback')) {
+          const feedback = document.createElement('div');
+          feedback.classList.add('invalid-feedback');
+          feedback.textContent = 'Por favor, introduce un teléfono válido (9 dígitos)';
+          this.parentNode.appendChild(feedback);
+        }
+      } else if (phoneValue) {
+        this.classList.remove('is-invalid');
+        this.classList.add('is-valid');
+      }
+    });
+    
+    // Validación de teléfono español
+    function validatePhone(phone) {
+      return /^[0-9]{9}$/.test(phone);
+    }
+
+    // Autocomplete para ciudades
+    const cityInput = document.getElementById("Ciudad");
+    const autocompleteList = document.getElementById("autocomplete-list");
+
+    let timeout = null; // Para retrasar las peticiones
+
+    cityInput.addEventListener("input", () => {
+        clearTimeout(timeout); // Reiniciar el temporizador
+
+        const query = cityInput.value.trim();
+        if (query.length < 2) {
+            autocompleteList.innerHTML = "";
+            autocompleteList.style.display = "none";
+            return;
+        }
+
+        timeout = setTimeout(async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/autocomplete?q=${query}`);
+                const cities = await response.json();
+
+                autocompleteList.innerHTML = "";
+                if (cities.length > 0) {
+                    autocompleteList.style.display = "block";
+                    cities.forEach(city => {
+                        const item = document.createElement("div");
+                        item.classList.add("autocomplete-item", "list-group-item");
+                        item.textContent = city;
+                        item.addEventListener("click", () => {
+                            cityInput.value = city;
+                            autocompleteList.style.display = "none";
+                        });
+                        autocompleteList.appendChild(item);
+                    });
+                } else {
+                    autocompleteList.style.display = "none";
+                }
+            } catch (error) {
+                console.error("Error en la solicitud:", error);
+            }
+        }, 300); // Espera 300ms antes de hacer la petición
+    });
+
+    document.addEventListener("click", (event) => {
+        if (!event.target.closest(".position-relative")) {
+            autocompleteList.style.display = "none";
+        }
+    });
   </script>
-  </body>
+</body>
 </html>

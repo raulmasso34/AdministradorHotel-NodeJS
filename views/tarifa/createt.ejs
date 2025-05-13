@@ -1,140 +1,273 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <!-- Usamos boxicons -->
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <title>Clients</title>  
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/logout"><i class="fa-solid fa-right-from-bracket"></i></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/clientes">CLIENTES</a>
-            </li>
-            <!-- Otras opciones del menú -->
-          </ul>
-        </div>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  
+  <!-- BoxIcons -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  
+  <!-- CSS personalizado -->
+  <link rel="stylesheet" href="/static/css/formularios.css">
+  
+  <title>Gestión de Tarifas</title>
+  
+
+</head>
+<body>
+  <div class="container mt-4">
+    <!-- Breadcrumb y título -->
+
+    
+    <!-- Formulario de Nueva Tarifa -->
+    <div class="card border-secondary mb-5">
+      <div class="card-header">
+        <i class='bx bx-money-withdraw me-2'></i> Agregar Tarifa
       </div>
-    </nav>
-
-    <div class="container mt-4">
-      <div class="card border-secondary">
-        <div class="card-header">AGREGAR</div>
-        <div class="card-body">
-          <form action="/savet" method="POST">
-            <div class="mb-3">
-              <label for="Id_Hotel" class="form-label">Hotel</label>
-              <select name="Id_Hotel" id="Id_Hotel" class="form-select" aria-label="Elige una de las opciones">
-                <% hoteles.forEach(hotel => { %>
-                  <option value="<%= hotel.Id_Hotel %>"><%= hotel.Nombre %></option>
-                <% }); %>
-              </select>
+      <div class="card-body">
+        <form action="/savet" method="POST" id="tarifaForm">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Id_Hotel" class="form-label required-field">Hotel</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-hotel'></i></span>
+                <select name="Id_Hotel" id="Id_Hotel" class="form-select" required aria-label="Elige una de las opciones">
+                  <option value="" selected disabled>Selecciona un hotel</option>
+                  <% hoteles.forEach(hotel => { %>
+                    <option value="<%= hotel.Id_Hotel %>"><%= hotel.Nombre %></option>
+                  <% }); %>
+                </select>
+              </div>
             </div>
             
-            <div class="mb-3">
-              <label for="Id_Habitacion" class="form-label">Habitacion</label>
-              <select name="Id_Habitacion" id="Id_Habitacion" class="form-select" aria-label="Elige una de las opciones">
-                <!-- Las opciones se llenarán dinámicamente -->
-              </select>
+            <div class="col-md-6 mb-3">
+              <label for="Id_Habitacion" class="form-label required-field">Habitación</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-bed'></i></span>
+                <select name="Id_Habitacion" id="Id_Habitacion" class="form-select" required aria-label="Elige una de las opciones">
+                  <option value="" selected disabled>Primero selecciona un hotel</option>
+                </select>
+              </div>
             </div>
-
-            <div class="mb-3">
-              <label for="Id_Actividad" class="form-label">Actividad</label>
-              <select name="Id_Actividad" id="Id_Actividad" class="form-select" aria-label="Elige una de las opciones">
-                <% actividades.forEach(actividad => { %>
-                  <option value="<%= actividad.Id_Actividades %>"><%= actividad.Actividad %></option>
-                <% }); %>
-              </select>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Id_Actividad" class="form-label required-field">Actividad</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-calendar-event'></i></span>
+                <select name="Id_Actividad" id="Id_Actividad" class="form-select" required aria-label="Elige una de las opciones">
+                  <option value="" selected disabled>Selecciona una actividad</option>
+                  <% actividades.forEach(actividad => { %>
+                    <option value="<%= actividad.Id_Actividades %>"><%= actividad.Actividad %></option>
+                  <% }); %>
+                </select>
+              </div>
             </div>
             
-            <div class="mb-3">
-              <label for="Id_Servicios" class="form-label">Servicio</label>
-              <select name="Id_Servicios" id="Id_Servicios" class="form-select" aria-label="Elige una de las opciones">
-                <% servicio.forEach(servicios => { %>
-                  <option value="<%= servicios.Id_Servicio %>"><%= servicios.Servicio %></option>
-                <% }); %>
-              </select>
+            <div class="col-md-6 mb-3">
+              <label for="Id_Servicios" class="form-label required-field">Servicio</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-server'></i></span>
+                <select name="Id_Servicios" id="Id_Servicios" class="form-select" required aria-label="Elige una de las opciones">
+                  <option value="" selected disabled>Selecciona un servicio</option>
+                  <% servicio.forEach(servicios => { %>
+                    <option value="<%= servicios.Id_Servicio %>"><%= servicios.Servicio %></option>
+                  <% }); %>
+                </select>
+              </div>
             </div>
-
-            <div class="mb-3">
-              <label for="Tipo_Habitacion" class="form-label">Tipo Habitacion</label>
-              <input type="text" class="form-control" id="Tipo_Habitacion" name="Tipo_Habitacion" tabindex="1" readonly>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Tipo_Habitacion" class="form-label">Tipo de Habitación</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-building-house'></i></span>
+                <input type="text" class="form-control" id="Tipo_Habitacion" name="Tipo_Habitacion" readonly>
+              </div>
+              <small class="text-muted">Este campo se actualiza automáticamente al seleccionar una habitación</small>
             </div>
-
-            <div class="mb-3">
-              <label for="Temporada" class="form-label">Temporada</label>
-              <input type="text" class="form-control" id="Temporada" name="Temporada" tabindex="1">
+            
+            <div class="col-md-6 mb-3">
+              <label for="Temporada" class="form-label required-field">Temporada</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-calendar'></i></span>
+                <select class="form-select" id="Temporada" name="Temporada" required>
+                  <option value="" selected disabled>Selecciona la temporada</option>
+                  <option value="Alta">Alta</option>
+                  <option value="Media">Media</option>
+                  <option value="Baja">Baja</option>
+                </select>
+              </div>
             </div>
-
-            <div class="mb-3">
-              <label for="Precio" class="form-label">Precio</label>
-              <input type="number" class="form-control" id="Precio" name="Precio" tabindex="1">
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Precio" class="form-label required-field">Precio</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-euro'></i></span>
+                <input type="number" class="form-control" id="Precio" name="Precio" step="0.01" min="0" required placeholder="0.00">
+              </div>
             </div>
-
-            <button type="submit" class="btn btn-primary" tabindex="5">Guardar</button>
-            <a href="/tarifa/" class="btn btn-secondary">Cancelar</a>
-          </form>
-        </div>
+          </div>
+          
+          <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class='bx bx-save me-1'></i> Guardar
+            </button>
+            <a href="/tarifa/" class="btn btn-secondary">
+              <i class='bx bx-arrow-back me-1'></i> Cancelar
+            </a>
+          </div>
+        </form>
       </div>
     </div>
+  </div>
+  
+  <!-- Botón para cambiar tema -->
+  <button class="theme-toggle" id="themeToggle">
+    <i class='bx bx-moon'></i>
+  </button>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const selectHotel = document.getElementById("Id_Hotel");
-        const selectHabitacion = document.getElementById("Id_Habitacion");
-        const inputTipoHabitacion = document.getElementById("Tipo_Habitacion");
+  <!-- Bootstrap Bundle con Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  
+  <!-- Script personalizado -->
+  <script>
+    // Theme toggle
+    document.getElementById('themeToggle').addEventListener('click', function() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      // Cambiar el icono
+      this.querySelector('i').classList.toggle('bx-moon');
+      this.querySelector('i').classList.toggle('bx-sun');
+      
+      // Guardar preferencia en localStorage
+      localStorage.setItem('theme', newTheme);
+    });
     
-        // Cuando el usuario selecciona un hotel
-        selectHotel.addEventListener("change", function () {
-          const idHotel = selectHotel.value;
-    
-          // Realizar la petición AJAX para obtener las habitaciones del hotel seleccionado
-          fetch(`/seleccionhabitacion/${idHotel}`)
-            .then(response => response.json())
-            .then(data => {
-              // Limpiar el select de habitaciones antes de agregar nuevas opciones
-              selectHabitacion.innerHTML = "";
-    
-              // Agregar opciones al select de habitaciones
-              data.forEach(habitacion => {
-                const option = document.createElement("option");
-                option.value = habitacion.Id_Habitaciones;
-                option.textContent = `${habitacion.Numero_Habitacion} - ${habitacion.Tipo}`;
-                option.setAttribute("data-tipo", habitacion.Tipo);  // Aseguramos de que guardamos el tipo en un atributo
-                selectHabitacion.appendChild(option);
-              });
-              
-              // Llamar a la función para actualizar el campo Tipo_Habitacion después de cargar las habitaciones
-              actualizarTipoHabitacion();
-            })
-            .catch(error => console.error("Error al obtener las habitaciones:", error));
+    // Cargar tema guardado
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      
+      // Actualizar icono según tema
+      if (savedTheme === 'dark') {
+        document.querySelector('#themeToggle i').classList.remove('bx-moon');
+        document.querySelector('#themeToggle i').classList.add('bx-sun');
+      }
+      
+      // Validación básica del formulario
+      const form = document.getElementById('tarifaForm');
+      form.addEventListener('submit', function(event) {
+        let valid = true;
+        const requiredInputs = document.querySelectorAll('input[required], select[required]');
+        
+        requiredInputs.forEach(input => {
+          if (!input.value.trim()) {
+            valid = false;
+            input.classList.add('is-invalid');
+            
+            // Crear mensaje de error si no existe
+            if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('invalid-feedback')) {
+              const feedback = document.createElement('div');
+              feedback.classList.add('invalid-feedback');
+              feedback.textContent = 'Este campo es obligatorio';
+              input.parentNode.appendChild(feedback);
+            }
+          } else {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+          }
         });
-    
-        // Función para actualizar el campo Tipo_Habitacion
-        function actualizarTipoHabitacion() {
-          const selectedOption = selectHabitacion.options[selectHabitacion.selectedIndex];
-          inputTipoHabitacion.value = selectedOption ? selectedOption.getAttribute("data-tipo") : "";
+        
+        if (!valid) {
+          event.preventDefault();
         }
-    
-        // Cuando el usuario selecciona una habitación, mostrar el tipo en el campo correspondiente
-        selectHabitacion.addEventListener("change", actualizarTipoHabitacion);
       });
-    </script>
-    
-  </body>
+      
+      // Eliminar clases de validación cuando se modifica el campo
+      const inputs = document.querySelectorAll('input, select');
+      inputs.forEach(input => {
+        input.addEventListener('input', function() {
+          this.classList.remove('is-invalid');
+          if (this.value.trim()) {
+            this.classList.add('is-valid');
+          }
+        });
+      });
+      
+      // Lógica para cargar habitaciones según el hotel seleccionado
+      const selectHotel = document.getElementById("Id_Hotel");
+      const selectHabitacion = document.getElementById("Id_Habitacion");
+      const inputTipoHabitacion = document.getElementById("Tipo_Habitacion");
+  
+      // Cuando el usuario selecciona un hotel
+      selectHotel.addEventListener("change", function () {
+        const idHotel = selectHotel.value;
+        
+        // Añadir estado visual de carga
+        selectHabitacion.disabled = true;
+        selectHabitacion.innerHTML = '<option value="" selected>Cargando habitaciones...</option>';
+  
+        // Realizar la petición AJAX para obtener las habitaciones del hotel seleccionado
+        fetch(`/seleccionhabitacion/${idHotel}`)
+          .then(response => response.json())
+          .then(data => {
+            // Habilitar select
+            selectHabitacion.disabled = false;
+            
+            // Limpiar el select de habitaciones antes de agregar nuevas opciones
+            selectHabitacion.innerHTML = "<option value='' selected disabled>Selecciona una habitación</option>";
+  
+            // Agregar opciones al select de habitaciones
+            data.forEach(habitacion => {
+              const option = document.createElement("option");
+              option.value = habitacion.Id_Habitaciones;
+              option.textContent = `${habitacion.Numero_Habitacion} - ${habitacion.Tipo}`;
+              option.setAttribute("data-tipo", habitacion.Tipo);  // Aseguramos de que guardamos el tipo en un atributo
+              selectHabitacion.appendChild(option);
+            });
+            
+            // Si no hay habitaciones disponibles
+            if (data.length === 0) {
+              selectHabitacion.innerHTML = "<option value='' selected disabled>No hay habitaciones disponibles</option>";
+            }
+            
+            // Actualizar validación visual
+            selectHotel.classList.add('is-valid');
+          })
+          .catch(error => {
+            console.error("Error al obtener las habitaciones:", error);
+            selectHabitacion.innerHTML = "<option value='' selected disabled>Error al cargar habitaciones</option>";
+            selectHabitacion.disabled = false;
+          });
+      });
+  
+      // Función para actualizar el campo Tipo_Habitacion
+      function actualizarTipoHabitacion() {
+        const selectedOption = selectHabitacion.options[selectHabitacion.selectedIndex];
+        inputTipoHabitacion.value = selectedOption && selectedOption.getAttribute("data-tipo") 
+          ? selectedOption.getAttribute("data-tipo") 
+          : "";
+          
+        // Actualizar validación visual
+        if (selectHabitacion.value) {
+          selectHabitacion.classList.add('is-valid');
+        }
+      }
+  
+      // Cuando el usuario selecciona una habitación, mostrar el tipo en el campo correspondiente
+      selectHabitacion.addEventListener("change", actualizarTipoHabitacion);
+    });
+  </script>
+</body>
 </html>

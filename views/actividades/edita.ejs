@@ -1,132 +1,271 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <!--Usamos boxicons-->
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <title>Clients</title>  
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/"><i class="fa-solid fa-right-from-bracket"></i></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/clientes">CLIENTES</a>
-            </li>
-            <li class="nav-item">
-              <% if (user && user.role === 'Hotel') { %>
-                <a class="nav-link active" href="/hotel/<%= user.id_hotel %>">HOTEL</a>
-            <% } else if (user && user.role === 'General') { %>
-              <a class="nav-link active" href="/hoteles">HOTEL</a> %>
-            <% } %>
-            </li>
-            <li class="nav-item">
-              <% if (user && user.role === 'Hotel') { %>
-                <a class="nav-link active" href="/oferta/<%= user.id_hotel %>">OFERTAS</a>
-            <% } else if (user && user.role === 'General') { %>
-              <a class="nav-link active" href="/ofertas">OFERTAS</a> %>
-            <% } %>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/actividades/">ACTIVIDADES</a>
-            </li>
-            <li class="nav-item active">
-              <a class="nav-link active" href="/servicio/">SERVICIO</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/tarifa/">TARIFA</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/pais/">PAIS</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/reservas/">RESERVAS</a>
-            </li>
-          </ul>
-          <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-          </form>
-        </div>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  
+  <!-- BoxIcons -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  
+  <!-- CSS personalizado -->
+  <link rel="stylesheet" href="/static/css/formularios.css">
+  
+  <title>Editar Actividad</title>
+</head>
+<body>
+  <% if (actividades) { %>
+  <div class="container mt-4">
+    <!-- Formulario de Edición de Actividad -->
+    <div class="card border-secondary mb-5">
+      <div class="card-header">
+        <i class='bx bx-calendar-edit me-2'></i> Editar Actividad
       </div>
-    </nav>
-
-      <% if (actividades) { %>
-        <div class="container mt-4">
-          <div class="card border-secondary">
-            <div class="card-header">EDITAR</div>
-            <div class="card-body">
-              <form action="/updatea" method="POST">
-                <input type="hidden" id="Id_Actividades" name="Id_Actividades" value="<%= actividades.Id_Actividades %>">
-                <div class="mb-3">
-                  <label for="Actividad" class="form-label">Actividad</label>
-                  <input type="text" class="form-control" id="Actividad" name="Actividad" tabindex="1" value="<%= actividades.Nombre %>">
-                </div>
-                <div class="mb-3">
-                  <label for="Id_Hotel" class="form-label">Hotel</label>
-                  <select name="Id_Hotel" id="Id_Hotel" class="form-select">
-                    <% hoteles.forEach(hotel => { %>
-                      <option value="<%= hotel.Id_Hotel %>" <%= hotel.Id_Hotel === hotel.Id_Hotel ? 'selected' : '' %>>
-                        <%= hotel.Nombre %>
-                      </option>
-                    <% }); %>
-                  </select>
-                </div>
-               
-
-
-                <div class="mb-3">
-                  <label for="Dia_Inicio" class="form-label">Dia Inicio</label>
-                  <input type="date" class="form-control" id="Dia_Inicio" name="Dia_Inicio" value="<%= actividades.Dia_Inicio.toISOString().split('T')[0] %>">
-                </div>
-                <div class="mb-3">
-                  <label for="Dia_Fin" class="form-label">Dia Fin</label>
-                  <input type="date" class="form-control" id="Dia_Fin" name="Dia_Fin" value="<%= actividades.Dia_Fin.toISOString().split('T')[0] %>">
-                </div>
-                <div class="mb-3">
-                  <label for="Hora_Inicio" class="form-label">Hora Inicio</label>
-                  <input type="time" class="form-control" id="Hora_Inicio" name="Hora_Inicio" tabindex="1" value="<%= actividades.Hora_Inicio %>">
-                </div>
-                <div class="mb-3">
-                  <label for="Hora_Fin" class="form-label">Hora Fin</label>
-                  <input type="time" class="form-control" id="Hora_Fin" name="Hora_Fin" tabindex="1" value="<%= actividades.Hora_Fin %>">
-                </div>
-                <div class="mb-3">
-                  <label for="Capacidad_Maxima" class="form-label">Capacidad Maxima</label>
-                  <input type="number" class="form-control" id="Capacidad_Maxima" name="Capacidad_Maxima" tabindex="1" value="<%= actividades.Capacidad_Maxima %>">
-                </div>
-                <div class="mb-3">
-                  <label for="Ubicacion" class="form-label">Ubicacion</label>
-                  <input type="text" class="form-control" id="Ubicacion" name="Ubicacion" tabindex="1" value="<%= actividades.Ubicacion %>">
-                </div>
-                <div class="mb-3">
-                  <label for="Descripcion" class="form-label">Descripcion</label>
-                  <input type="text" class="form-control" id="Descripcion" name="Descripcion" tabindex="1" value="<%= actividades.Descripcion %>">
-                </div>
-                <button type="submit" class="btn btn-primary" tabindex="5">Guardar</button>
-                <% if (user && user.role === 'Hotel') { %>
-                  <a class="btn btn-secondary" href="/actividad/<%= user.id_hotel %>">Cancelar</a>
-              <% } else if (user && user.role === 'General') { %>
-                <a href="/actividades/" class="btn btn-secondary">Cancelar</a>
-              <% } %>
-              </form>
+      <div class="card-body">
+        <form action="/updatea" method="POST" id="actividadForm">
+          <input type="hidden" id="Id_Actividades" name="Id_Actividades" value="<%= actividades.Id_Actividades %>">
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Actividad" class="form-label required-field">Nombre de la Actividad</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-calendar-star'></i></span>
+                <input type="text" class="form-control" id="Actividad" name="Actividad" required value="<%= actividades.Nombre %>">
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Id_Hotel" class="form-label required-field">Hotel</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-hotel'></i></span>
+                <select name="Id_Hotel" id="Id_Hotel" class="form-select" required>
+                  <% hoteles.forEach(hotel => { %>
+                    <option value="<%= hotel.Id_Hotel %>" <%= hotel.Id_Hotel === actividades.Id_Hotel ? 'selected' : '' %>>
+                      <%= hotel.Nombre %>
+                    </option>
+                  <% }); %>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
-      <% } %>
-      
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Dia_Inicio" class="form-label required-field">Día de Inicio</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-calendar'></i></span>
+                <input type="date" class="form-control" id="Dia_Inicio" name="Dia_Inicio" required value="<%= actividades.Dia_Inicio.toISOString().split('T')[0] %>">
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Dia_Fin" class="form-label required-field">Día de Fin</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-calendar-check'></i></span>
+                <input type="date" class="form-control" id="Dia_Fin" name="Dia_Fin" required value="<%= actividades.Dia_Fin.toISOString().split('T')[0] %>">
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Hora_Inicio" class="form-label required-field">Hora de Inicio</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-time'></i></span>
+                <input type="time" class="form-control" id="Hora_Inicio" name="Hora_Inicio" required value="<%= actividades.Hora_Inicio %>">
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Hora_Fin" class="form-label required-field">Hora de Fin</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-time-five'></i></span>
+                <input type="time" class="form-control" id="Hora_Fin" name="Hora_Fin" required value="<%= actividades.Hora_Fin %>">
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Capacidad_Maxima" class="form-label required-field">Capacidad Máxima</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-group'></i></span>
+                <input type="number" class="form-control" id="Capacidad_Maxima" name="Capacidad_Maxima" required min="1" value="<%= actividades.Capacidad_Maxima %>">
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Ubicacion" class="form-label required-field">Ubicación</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-map'></i></span>
+                <input type="text" class="form-control" id="Ubicacion" name="Ubicacion" required value="<%= actividades.Ubicacion %>">
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="Descripcion" class="form-label required-field">Descripción</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class='bx bx-text'></i></span>
+              <textarea class="form-control" id="Descripcion" name="Descripcion" required rows="4"><%= actividades.Descripcion %></textarea>
+            </div>
+          </div>
+          
+          <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class='bx bx-save me-1'></i> Guardar Cambios
+            </button>
+            <% if (user && user.role === 'Hotel') { %>
+              <a class="btn btn-secondary" href="/actividad/<%= user.id_hotel %>">
+                <i class='bx bx-arrow-back me-1'></i> Cancelar
+              </a>
+            <% } else if (user && user.role === 'General') { %>
+              <a href="/actividades/" class="btn btn-secondary">
+                <i class='bx bx-arrow-back me-1'></i> Cancelar
+              </a>
+            <% } %>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <% } %>
+  
+  <!-- Botón para cambiar tema -->
+  <button class="theme-toggle" id="themeToggle">
+    <i class='bx bx-moon'></i>
+  </button>
 
-   
-  </body>
+  <!-- Bootstrap Bundle con Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  
+  <!-- Script personalizado -->
+  <script>
+    // Theme toggle
+    document.getElementById('themeToggle').addEventListener('click', function() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      // Cambiar el icono
+      this.querySelector('i').classList.toggle('bx-moon');
+      this.querySelector('i').classList.toggle('bx-sun');
+      
+      // Guardar preferencia en localStorage
+      localStorage.setItem('theme', newTheme);
+    });
+    
+    // Cargar tema guardado
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      
+      // Actualizar icono según tema
+      if (savedTheme === 'dark') {
+        document.querySelector('#themeToggle i').classList.remove('bx-moon');
+        document.querySelector('#themeToggle i').classList.add('bx-sun');
+      }
+      
+      // Validación básica del formulario
+      const form = document.getElementById('actividadForm');
+      if (form) {
+        form.addEventListener('submit', function(event) {
+          let valid = true;
+          const requiredInputs = document.querySelectorAll('input[required], select[required], textarea[required]');
+          
+          requiredInputs.forEach(input => {
+            if (!input.value.trim()) {
+              valid = false;
+              input.classList.add('is-invalid');
+              
+              // Crear mensaje de error si no existe
+              if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('invalid-feedback')) {
+                const feedback = document.createElement('div');
+                feedback.classList.add('invalid-feedback');
+                feedback.textContent = 'Este campo es obligatorio';
+                input.parentNode.appendChild(feedback);
+              }
+            } else {
+              input.classList.remove('is-invalid');
+              input.classList.add('is-valid');
+            }
+          });
+          
+          // Validación específica para fechas
+          const diaInicio = new Date(document.getElementById('Dia_Inicio').value);
+          const diaFin = new Date(document.getElementById('Dia_Fin').value);
+          
+          if (diaInicio > diaFin) {
+            valid = false;
+            const diaFinInput = document.getElementById('Dia_Fin');
+            diaFinInput.classList.add('is-invalid');
+            
+            // Crear mensaje de error específico para fecha
+            if (!diaFinInput.nextElementSibling || !diaFinInput.nextElementSibling.classList.contains('invalid-feedback')) {
+              const feedback = document.createElement('div');
+              feedback.classList.add('invalid-feedback');
+              feedback.textContent = 'La fecha de fin no puede ser anterior a la fecha de inicio';
+              diaFinInput.parentNode.appendChild(feedback);
+            }
+          }
+          
+          // Validación para horas
+          if (diaInicio.getTime() === diaFin.getTime()) {
+            const horaInicio = document.getElementById('Hora_Inicio').value;
+            const horaFin = document.getElementById('Hora_Fin').value;
+            
+            if (horaInicio >= horaFin) {
+              valid = false;
+              const horaFinInput = document.getElementById('Hora_Fin');
+              horaFinInput.classList.add('is-invalid');
+              
+              // Crear mensaje de error específico para hora
+              if (!horaFinInput.nextElementSibling || !horaFinInput.nextElementSibling.classList.contains('invalid-feedback')) {
+                const feedback = document.createElement('div');
+                feedback.classList.add('invalid-feedback');
+                feedback.textContent = 'La hora de fin debe ser posterior a la hora de inicio';
+                horaFinInput.parentNode.appendChild(feedback);
+              }
+            }
+          }
+          
+          // Validación para capacidad máxima
+          const capacidadInput = document.getElementById('Capacidad_Maxima');
+          const capacidad = parseInt(capacidadInput.value);
+          
+          if (isNaN(capacidad) || capacidad <= 0) {
+            valid = false;
+            capacidadInput.classList.add('is-invalid');
+            
+            // Crear mensaje de error específico para capacidad
+            if (!capacidadInput.nextElementSibling || !capacidadInput.nextElementSibling.classList.contains('invalid-feedback')) {
+              const feedback = document.createElement('div');
+              feedback.classList.add('invalid-feedback');
+              feedback.textContent = 'La capacidad máxima debe ser un número mayor que cero';
+              capacidadInput.parentNode.appendChild(feedback);
+            }
+          }
+          
+          if (!valid) {
+            event.preventDefault();
+          }
+        });
+        
+        // Eliminar clases de validación cuando se modifica el campo
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+          input.addEventListener('input', function() {
+            this.classList.remove('is-invalid');
+            if (this.value.trim()) {
+              this.classList.add('is-valid');
+            }
+          });
+        });
+      }
+    });
+  </script>
+</body>
 </html>

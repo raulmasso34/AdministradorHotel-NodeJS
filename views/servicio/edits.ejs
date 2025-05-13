@@ -1,111 +1,195 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <!--Usamos boxicons-->
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <title>Clients</title>  
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/logout"><i class="fa-solid fa-right-from-bracket"></i></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/clientes">CLIENTES</a>
-            </li>
-        
-            <li class="nav-item">
-              <% if (user && user.role === 'Hotel') { %>
-                <a class="nav-link active" href="/hotel/<%= user.id_hotel %>">HOTEL</a>
-            <% } else if (user && user.role === 'General') { %>
-              <a class="nav-link active" href="/hoteles">HOTEL</a> %>
-            <% } %>
-            </li>
-            <li class="nav-item">
-              <% if (user && user.role === 'Hotel') { %>
-                <a class="nav-link active" href="/oferta/<%= user.id_hotel %>">OFERTAS</a>
-            <% } else if (user && user.role === 'General') { %>
-              <a class="nav-link active" href="/ofertas">OFERTAS</a> %>
-            <% } %>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/actividades/">ACTIVIDADES</a>
-            </li>
-            <li class="nav-item active">
-              <a class="nav-link active" href="/servicio/">SERVICIO</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/tarifa/">TARIFA</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/pais/">PAIS</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/reservas/">RESERVAS</a>
-            </li>
-          </ul>
-          <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-          </form>
-        </div>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  
+  <!-- BoxIcons -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  
+  <!-- CSS personalizado -->
+  <link rel="stylesheet" href="/static/css/formularios.css">
+  
+  <title>Editar Servicio</title>
+</head>
+<body>
+  <% if (servicio) { %>
+  <div class="container mt-4">
+    <!-- Formulario de Edición de Servicio -->
+    <div class="card border-secondary mb-5">
+      <div class="card-header">
+        <i class='bx bx-server me-2'></i> Editar Servicio
       </div>
-    </nav>
-
-      <% if (servicio) { %>
-        <div class="container mt-4">
-          <div class="card border-secondary">
-            <div class="card-header">EDITAR</div>
-            <div class="card-body">
-              <form action="/updates" method="POST">
-                <input type="hidden" id="Id_Servicio" name="Id_Servicio" value="<%= servicio.Id_Servicio %>">
-                <div class="mb-3">
-                  <label for="Id_Hotel" class="form-label">Hotel</label>
-                  <select name="Id_Hotel" id="Id_Hotel" class="form-select">
-                    <% hoteles.forEach(hotel => { %>
-                      <option value="<%= hotel.Id_Hotel %>" <%= hotel.Id_Hotel === hotel.Id_Hotel ? 'selected' : '' %>>
-                        <%= hotel.Nombre %>
-                      </option>
-                    <% }); %>
-                  </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="Servicio" class="form-label">Servicio</label>
-                    <input type="text" class="form-control" id="Servicio" name="Servicio" tabindex="1" value="<%= servicio.Servicio %>">
-                  </div>
-                <div class="mb-3">
-                  <label for="Descripcion" class="form-label">Descripcion</label>
-                  <input type="text" class="form-control" id="Descripcion" name="Descripcion" tabindex="1" value="<%= servicio.Descripcion %>">
-                </div>
-                <div class="mb-3">
-                  <label for="Precio" class="form-label">Precio</label>
-                  <input type="text" class="form-control" id="Precio" name="Precio" tabindex="1" value="<%= servicio.Precio %>">
-                </div>
-                <button type="submit" class="btn btn-primary" tabindex="5">Guardar</button>
-                <% if (user && user.role === 'Hotel') { %>
-                  <a class="btn btn-secondary" href="/servicios/<%= user.id_hotel %>">Cancelar</a>
-              <% } else if (user && user.role === 'General') { %>
-                <a href="/servicio/" class="btn btn-secondary">Cancelar</a>
-              <% } %>
-              </form>
+      <div class="card-body">
+        <form action="/updates" method="POST" id="servicioForm">
+          <input type="hidden" id="Id_Servicio" name="Id_Servicio" value="<%= servicio.Id_Servicio %>">
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Id_Hotel" class="form-label required-field">Hotel</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-hotel'></i></span>
+                <select name="Id_Hotel" id="Id_Hotel" class="form-select" required>
+                  <% hoteles.forEach(hotel => { %>
+                    <option value="<%= hotel.Id_Hotel %>" <%= hotel.Id_Hotel === servicio.Id_Hotel ? 'selected' : '' %>>
+                      <%= hotel.Nombre %>
+                    </option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Servicio" class="form-label required-field">Nombre del Servicio</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-package'></i></span>
+                <input type="text" class="form-control" id="Servicio" name="Servicio" required value="<%= servicio.Servicio %>">
+              </div>
             </div>
           </div>
-        </div>
-      <% } %>
-      
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+          
+          <div class="mb-3">
+            <label for="Descripcion" class="form-label required-field">Descripción</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class='bx bx-text'></i></span>
+              <textarea class="form-control" id="Descripcion" name="Descripcion" required rows="4"><%= servicio.Descripcion %></textarea>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Precio" class="form-label required-field">Precio</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-euro'></i></span>
+                <input type="number" class="form-control" id="Precio" name="Precio" step="0.01" min="0" required value="<%= servicio.Precio %>">
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class='bx bx-save me-1'></i> Guardar Cambios
+            </button>
+            <% if (user && user.role === 'Hotel') { %>
+              <a class="btn btn-secondary" href="/servicios/<%= user.id_hotel %>">
+                <i class='bx bx-arrow-back me-1'></i> Cancelar
+              </a>
+            <% } else if (user && user.role === 'General') { %>
+              <a href="/servicio/" class="btn btn-secondary">
+                <i class='bx bx-arrow-back me-1'></i> Cancelar
+              </a>
+            <% } %>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <% } %>
+  
+  <!-- Botón para cambiar tema -->
+  <button class="theme-toggle" id="themeToggle">
+    <i class='bx bx-moon'></i>
+  </button>
 
-   
-  </body>
+  <!-- Bootstrap Bundle con Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  
+  <!-- Script personalizado -->
+  <script>
+    // Theme toggle
+    document.getElementById('themeToggle').addEventListener('click', function() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      // Cambiar el icono
+      this.querySelector('i').classList.toggle('bx-moon');
+      this.querySelector('i').classList.toggle('bx-sun');
+      
+      // Guardar preferencia en localStorage
+      localStorage.setItem('theme', newTheme);
+    });
+    
+    // Cargar tema guardado
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      
+      // Actualizar icono según tema
+      if (savedTheme === 'dark') {
+        document.querySelector('#themeToggle i').classList.remove('bx-moon');
+        document.querySelector('#themeToggle i').classList.add('bx-sun');
+      }
+      
+      // Validación básica del formulario
+      const form = document.getElementById('servicioForm');
+      if (form) {
+        form.addEventListener('submit', function(event) {
+          let valid = true;
+          const requiredInputs = document.querySelectorAll('input[required], select[required], textarea[required]');
+          
+          requiredInputs.forEach(input => {
+            if (!input.value.trim()) {
+              valid = false;
+              input.classList.add('is-invalid');
+              
+              // Crear mensaje de error si no existe
+              if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('invalid-feedback')) {
+                const feedback = document.createElement('div');
+                feedback.classList.add('invalid-feedback');
+                feedback.textContent = 'Este campo es obligatorio';
+                input.parentNode.appendChild(feedback);
+              }
+            } else {
+              input.classList.remove('is-invalid');
+              input.classList.add('is-valid');
+            }
+          });
+          
+          // Validación específica para precio
+          const precioInput = document.getElementById('Precio');
+          if (precioInput.value && (isNaN(precioInput.value) || parseFloat(precioInput.value) < 0)) {
+            valid = false;
+            precioInput.classList.add('is-invalid');
+            
+            // Crear mensaje de error específico para precio
+            if (!precioInput.nextElementSibling || !precioInput.nextElementSibling.classList.contains('invalid-feedback')) {
+              const feedback = document.createElement('div');
+              feedback.classList.add('invalid-feedback');
+              feedback.textContent = 'Por favor, introduce un precio válido (número mayor o igual a 0)';
+              precioInput.parentNode.appendChild(feedback);
+            }
+          }
+          
+          if (!valid) {
+            event.preventDefault();
+          }
+        });
+        
+        // Eliminar clases de validación cuando se modifica el campo
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+          input.addEventListener('input', function() {
+            this.classList.remove('is-invalid');
+            if (this.value.trim()) {
+              this.classList.add('is-valid');
+            }
+          });
+        });
+        
+        // Formateador de precio
+        const precioInput = document.getElementById('Precio');
+        precioInput.addEventListener('blur', function() {
+          if (this.value && !isNaN(this.value)) {
+            this.value = parseFloat(this.value).toFixed(2);
+          }
+        });
+      }
+    });
+  </script>
+</body>
 </html>

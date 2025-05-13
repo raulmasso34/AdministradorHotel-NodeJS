@@ -6,171 +6,669 @@
     <title>Estados de Reservas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/formularios.css">
+
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .btn-recuperar, .btn-pagado, .btn-cancelar { width: 100px; }
+        :root {
+            --primary-color: #2563eb;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --bg-color: #ffffff;
+            --text-color: #2d3748;
+            --border-color: #e2e8f0;
+            --sidebar-bg: #1e3d59;
+            --table-header-bg: #2a3042;
+            --container-bg: #f8fafc;
+            --tab-active-border: #2563eb;
+            --tab-hover-bg: #f1f5f9;
+            --table-stripe: #f8fafc;
+            --table-hover: #f1f5f9;
+        }
+        
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --border-color: #475569;
+            --container-bg: #1e293b;
+            --sidebar-bg: #1e293b;
+            --table-header-bg: #334155;
+            --primary-color: #3b82f6;
+            --success-color: #34d399;
+            --danger-color: #f87171;
+            --warning-color: #fbbf24;
+            --tab-active-border: #3b82f6;
+            --tab-hover-bg: #1e293b;
+            --table-stripe: #1e293b;
+            --table-hover: #334155;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .page-header {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .client-name {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+        
+        .exit-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            padding: 0.6rem 1rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .exit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(239, 68, 68, 0.3);
+        }
+        
+        .nav-tabs {
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .nav-tabs .nav-link {
+            color: var(--text-color);
+            font-weight: 500;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            margin-right: 0.5rem;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            background-color: var(--tab-hover-bg);
+            border-color: transparent;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            background-color: var(--bg-color);
+            border-bottom: 3px solid var(--tab-active-border);
+            font-weight: 600;
+        }
+        
+        .dashboard-card {
+            background-color: var(--bg-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+        
+        .table {
+            background-color: var(--bg-color);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .table thead th {
+            background-color: var(--table-header-bg);
+            color: #ffffff;
+            padding: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            border: none;
+            white-space: nowrap;
+        }
+        
+        .table tbody td {
+            padding: 0.75rem;
+            vertical-align: middle;
+            border-color: var(--border-color);
+            color: var(--text-color);
+        }
+        
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: var(--table-stripe);
+        }
+        
+        .table tbody tr:hover {
+            background-color: var(--table-hover);
+        }
+        
+        .btn {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn-recuperar, .btn-pagado, .btn-cancelar {
+            width: 100%;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .action-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border: none;
+            font-size: 1.2rem;
+        }
+        
+        .stats-card {
+            background-color: var(--bg-color);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0;
+            color: var(--primary-color);
+        }
+        
+        .stats-label {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+        
+        .no-data {
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .no-data i {
+            font-size: 3rem;
+            color: var(--border-color);
+            margin-bottom: 1rem;
+        }
+        
+        .price-column {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        @media (max-width: 1200px) {
+            .table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .exit-btn {
+                position: absolute;
+                top: 1rem;
+                left: 1rem;
+            }
+            
+            .page-header {
+                margin-top: 3rem;
+                text-align: center;
+            }
+            
+            .stats-row {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
-
-    <a href="/clientes" class="btn btn-sm btn-danger" title="Exit">
-        <i class="fa-solid fa-right-from-bracket"></i>
+    <!-- Botón de salida mejorado -->
+    <a href="/clientes" class="btn btn-danger exit-btn" title="Volver a clientes">
+        <i class="fa-solid fa-right-from-bracket me-1"></i> Salir
     </a>
 
     <div class="container">
-        <h1 class="my-4">Estados de las Reservas de Cliente <%= Nom %></h1>
+        <!-- Encabezado mejorado -->
+        <div class="page-header">
+            <h1 class="mb-3">
+                <i class="fa-solid fa-clipboard-check me-2"></i>
+                Estados de Reservas 
+                <span class="client-name"><%= Nom %></span>
+            </h1>
+            <p class="text-muted">Gestione el estado de las reservas del cliente y realice acciones específicas para cada una.</p>
+        </div>
 
-        <!-- Pestañas de Bootstrap -->
-        <ul class="nav nav-tabs" id="reservasTab" role="tablist">
-            <li class="nav-item">
-                <button class="nav-link active" id="porPagar-tab" data-bs-toggle="tab" data-bs-target="#porPagar" type="button" role="tab">Por Pagar</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" id="pagado-tab" data-bs-toggle="tab" data-bs-target="#pagado" type="button" role="tab">Pagado</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" id="cancelado-tab" data-bs-toggle="tab" data-bs-target="#cancelado" type="button" role="tab">Cancelado</button>
-            </li>
-        </ul>
-
-        <!-- Contenido de las pestañas -->
-        <div class="tab-content" id="reservasTabContent">
+        <!-- Resumen estadístico -->
+        <div class="row stats-row mb-4">
+            <% 
+                let porPagarCount = 0;
+                let pagadoCount = 0;
+                let canceladoCount = 0;
+                let totalAmount = 0;
+                
+                resultados.forEach(reserva => {
+                    if (reserva.Estado === 'Por pagar') porPagarCount++;
+                    if (reserva.Estado === 'Pagado') pagadoCount++;
+                    if (reserva.Estado === 'Cancelado') canceladoCount++;
+                    
+                    if (reserva.Estado === 'Pagado' || reserva.Estado === 'Por pagar') {
+                        totalAmount += parseFloat(reserva.Precio_Total);
+                    }
+                });
+            %>
             
-            <!-- Pestaña "Por Pagar" -->
-            <div class="tab-pane fade show active" id="porPagar" role="tabpanel">
-                <table class="table table-bordered table-striped mt-3">
-                    <thead>
-                        <tr>
-                            <th>ID Reserva</th>
-                            <th>Cliente</th>
-                            <th>Actividad</th>
-                            <th>Habitación</th>
-                            <th>Hotel</th>
-                            <th>Tarifa</th>
-                            <th>Precio Total</th>
-                            <th>Check In</th>
-                            <th>Check Out</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% resultados.forEach(reserva => { if (reserva.Estado === 'Por pagar') { %>
-                            <tr>
-                                <td><%= reserva.Id_Reserva %></td>
-                                <td><%= reserva.Nom %></td>
-                                <td><%= reserva.Actividad %></td>
-                                <td><%= reserva.Tipo %></td>
-                                <td><%= reserva.Nombre %></td>
-                                <td><%= reserva.Temporada %></td>
-                                <td><%= reserva.Precio_Total %></td>
-                                <td><%= reserva.Checkin %></td>
-                                <td><%= reserva.Checkout %></td>
-                                <td>
-                                    <form action="/cliente/<%= clienteId %>/estado/<%= reserva.Id_Reserva %>" method="POST">
-                                        <button type="submit" class="btn btn-success btn-pagado" name="estado" value="Pagado">Pagar</button>
-                                        <button type="submit" class="btn btn-danger btn-cancelar" name="estado" value="Cancelado">Cancelar</button>
-                                    </form>
-                                    <form action="/editareserva/<%= reserva.Id_Reserva %>" method="POST">
-                                        <!-- Campos del formulario para editar la reserva -->
-                                        <button type="submit" class="btn btn-primary">Actualizar Reserva</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <% } }); %>
-                    </tbody>
-                </table>
+            <div class="col-md-3">
+                <div class="stats-card" style="border-left-color: var(--warning-color);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="stats-number" style="color: var(--warning-color);"><%= porPagarCount %></p>
+                            <p class="stats-label">Por Pagar</p>
+                        </div>
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-circle">
+                            <i class="fa-solid fa-clock text-warning fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <!-- Pestaña "Pagado" -->
-            <div class="tab-pane fade" id="pagado" role="tabpanel">
-                <table class="table table-bordered table-striped mt-3">
-                    <thead>
-                        <tr>
-                            <th>ID Reserva</th>
-                            <th>Cliente</th>
-                            <th>Habitación</th>
-                            <th>Hotel</th>
-                            <th>Tarifa</th>
-                            <th>Precio Total</th>
-                            <th>Check In</th>
-                            <th>Check Out</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% resultados.forEach(reserva => { if (reserva.Estado === 'Pagado') { %>
-                            <tr>
-                                <td><%= reserva.Id_Reserva %></td>
-                                <td><%= reserva.Nom %></td>
-                                <td><%= reserva.Tipo %></td>
-                                <td><%= reserva.Nombre %></td>
-                                <td><%= reserva.Temporada %></td>
-                                <td><%= reserva.Precio_Total %></td>
-                                <td><%= reserva.Checkin %></td>
-                                <td><%= reserva.Checkout %></td>
-                                <td>
-                                    <form action="/cliente/<%= clienteId %>/estado/<%= reserva.Id_Reserva %>" method="POST">
-                                        <button type="submit" class="btn btn-danger btn-cancelar" name="estado" value="Cancelado">Cancelar</button>
-                                    </form>
-                                    <form action="/editareserva/<%= reserva.Id_Reserva %>" method="POST">
-                                        <!-- Campos del formulario para editar la reserva -->
-                                        <button type="submit" class="btn btn-primary">Actualizar Reserva</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <% } }); %>
-                    </tbody>
-                </table>
+            
+            <div class="col-md-3">
+                <div class="stats-card" style="border-left-color: var(--success-color);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="stats-number" style="color: var(--success-color);"><%= pagadoCount %></p>
+                            <p class="stats-label">Pagadas</p>
+                        </div>
+                        <div class="bg-success bg-opacity-10 p-3 rounded-circle">
+                            <i class="fa-solid fa-check-circle text-success fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <!-- Pestaña "Cancelado" -->
-            <div class="tab-pane fade" id="cancelado" role="tabpanel">
-                <table class="table table-bordered table-striped mt-3">
-                    <thead>
-                        <tr>
-                            <th>ID Reserva</th>
-                            <th>Cliente</th>
-                            <th>Habitación</th>
-                            <th>Hotel</th>
-                            <th>Tarifa</th>
-                            <th>Precio Total</th>
-                            <th>Check In</th>
-                            <th>Check Out</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% resultados.forEach(reserva => { if (reserva.Estado === 'Cancelado') { %>
-                            <tr>
-                                <td><%= reserva.Id_Reserva %></td>
-                                <td><%= reserva.Nom %></td>
-                                <td><%= reserva.Tipo %></td>
-                                <td><%= reserva.Nombre %></td>
-                                <td><%= reserva.Temporada %></td>
-                                <td><%= reserva.Precio_Total %></td>
-                                <td><%= reserva.Checkin %></td>
-                                <td><%= reserva.Checkout %></td>
-                                <td>
-                                    <form action="/cliente/<%= clienteId %>/estado/<%= reserva.Id_Reserva %>" method="POST">
-                                        <button type="submit" class="btn btn-success btn-recuperar" name="estado" value="Por pagar">Recuperar</button>
-                                    </form>
-                                    
-                                    <form action="/editareserva/<%= reserva.Id_Reserva %>" method="POST">
-                                        <!-- Campos del formulario para editar la reserva -->
-                                        <button type="submit" class="btn btn-primary">Actualizar Reserva</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <% } }); %>
-                    </tbody>
-                </table>
+            
+            <div class="col-md-3">
+                <div class="stats-card" style="border-left-color: var(--danger-color);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="stats-number" style="color: var(--danger-color);"><%= canceladoCount %></p>
+                            <p class="stats-label">Canceladas</p>
+                        </div>
+                        <div class="bg-danger bg-opacity-10 p-3 rounded-circle">
+                            <i class="fa-solid fa-times-circle text-danger fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
+            
+            <div class="col-md-3">
+                <div class="stats-card" style="border-left-color: var(--primary-color);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="stats-number">€<%= totalAmount.toFixed(2) %></p>
+                            <p class="stats-label">Total Activo</p>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
+                            <i class="fa-solid fa-euro-sign text-primary fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Contenedor principal mejorado -->
+        <div class="dashboard-card">
+            <!-- Pestañas de Bootstrap mejoradas -->
+            <ul class="nav nav-tabs" id="reservasTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active d-flex align-items-center" id="porPagar-tab" data-bs-toggle="tab" data-bs-target="#porPagar" type="button" role="tab">
+                        <i class="fa-solid fa-hourglass-half me-2 text-warning"></i>
+                        Por Pagar
+                        <span class="badge bg-warning ms-2 rounded-pill"><%= porPagarCount %></span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link d-flex align-items-center" id="pagado-tab" data-bs-toggle="tab" data-bs-target="#pagado" type="button" role="tab">
+                        <i class="fa-solid fa-check-circle me-2 text-success"></i>
+                        Pagado
+                        <span class="badge bg-success ms-2 rounded-pill"><%= pagadoCount %></span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link d-flex align-items-center" id="cancelado-tab" data-bs-toggle="tab" data-bs-target="#cancelado" type="button" role="tab">
+                        <i class="fa-solid fa-times-circle me-2 text-danger"></i>
+                        Cancelado
+                        <span class="badge bg-danger ms-2 rounded-pill"><%= canceladoCount %></span>
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Contenido de las pestañas -->
+            <div class="tab-content mt-4" id="reservasTabContent">
+                
+                <!-- Pestaña "Por Pagar" -->
+                <div class="tab-pane fade show active" id="porPagar" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%">ID</th>
+                                    <th style="width: 12%">Cliente</th>
+                                    <th style="width: 12%">Actividad</th>
+                                    <th style="width: 10%">Habitación</th>
+                                    <th style="width: 10%">Hotel</th>
+                                    <th style="width: 8%">Tarifa</th>
+                                    <th style="width: 10%">Precio Total</th>
+                                    <th style="width: 10%">Check In</th>
+                                    <th style="width: 10%">Check Out</th>
+                                    <th style="width: 15%">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% 
+                                let porPagarReservas = resultados.filter(reserva => reserva.Estado === 'Por pagar');
+                                if (porPagarReservas.length === 0) { 
+                                %>
+                                    <tr>
+                                        <td colspan="10" class="no-data">
+                                            <i class="fa-solid fa-info-circle"></i>
+                                            <p>No hay reservas pendientes de pago</p>
+                                        </td>
+                                    </tr>
+                                <% } else { %>
+                                    <% porPagarReservas.forEach(reserva => { %>
+                                        <tr>
+                                            <td><%= reserva.Id_Reserva %></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fa-solid fa-user me-2 text-primary"></i>
+                                                    <%= reserva.Nom %>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <% if (reserva.Actividad) { %>
+                                                    <i class="fa-solid fa-calendar-check me-1 text-success"></i>
+                                                    <%= reserva.Actividad %>
+                                                <% } else { %>
+                                                    <span class="text-muted"><i class="fa-solid fa-minus"></i></span>
+                                                <% } %>
+                                            </td>
+                                            <td><%= reserva.Tipo %></td>
+                                            <td><%= reserva.Nombre %></td>
+                                            <td><%= reserva.Temporada %></td>
+                                            <td class="price-column">€<%= reserva.Precio_Total %></td>
+                                            <td>
+                                                <i class="fa-solid fa-calendar-alt me-1 text-primary"></i>
+                                                <%= reserva.Checkin %>
+                                            </td>
+                                            <td>
+                                                <i class="fa-solid fa-calendar-alt me-1 text-danger"></i>
+                                                <%= reserva.Checkout %>
+                                            </td>
+                                            <td>
+                                                <div class="action-btn-group">
+                                                    <form action="/cliente/<%= clienteId %>/estado/<%= reserva.Id_Reserva %>" method="POST">
+                                                        <button type="submit" class="btn btn-success btn-pagado" name="estado" value="Pagado">
+                                                            <i class="fa-solid fa-check me-1"></i> Pagar
+                                                        </button>
+                                                        <button type="submit" class="btn btn-danger btn-cancelar" name="estado" value="Cancelado">
+                                                            <i class="fa-solid fa-times me-1"></i> Cancelar
+                                                        </button>
+                                                    </form>
+                                                    <form action="/editareserva/<%= reserva.Id_Reserva %>" method="POST">
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="fa-solid fa-edit me-1"></i> Actualizar
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pestaña "Pagado" -->
+                <div class="tab-pane fade" id="pagado" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%">ID</th>
+                                    <th style="width: 15%">Cliente</th>
+                                    <th style="width: 10%">Habitación</th>
+                                    <th style="width: 10%">Hotel</th>
+                                    <th style="width: 10%">Tarifa</th>
+                                    <th style="width: 10%">Precio Total</th>
+                                    <th style="width: 10%">Check In</th>
+                                    <th style="width: 10%">Check Out</th>
+                                    <th style="width: 20%">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% 
+                                let pagadoReservas = resultados.filter(reserva => reserva.Estado === 'Pagado');
+                                if (pagadoReservas.length === 0) { 
+                                %>
+                                    <tr>
+                                        <td colspan="9" class="no-data">
+                                            <i class="fa-solid fa-info-circle"></i>
+                                            <p>No hay reservas pagadas</p>
+                                        </td>
+                                    </tr>
+                                <% } else { %>
+                                    <% pagadoReservas.forEach(reserva => { %>
+                                        <tr>
+                                            <td><%= reserva.Id_Reserva %></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fa-solid fa-user me-2 text-primary"></i>
+                                                    <%= reserva.Nom %>
+                                                </div>
+                                            </td>
+                                            <td><%= reserva.Tipo %></td>
+                                            <td><%= reserva.Nombre %></td>
+                                            <td><%= reserva.Temporada %></td>
+                                            <td class="price-column">€<%= reserva.Precio_Total %></td>
+                                            <td>
+                                                <i class="fa-solid fa-calendar-alt me-1 text-primary"></i>
+                                                <%= reserva.Checkin %>
+                                            </td>
+                                            <td>
+                                                <i class="fa-solid fa-calendar-alt me-1 text-danger"></i>
+                                                <%= reserva.Checkout %>
+                                            </td>
+                                            <td>
+                                                <div class="action-btn-group">
+                                                    <form action="/cliente/<%= clienteId %>/estado/<%= reserva.Id_Reserva %>" method="POST">
+                                                        <button type="submit" class="btn btn-danger btn-cancelar" name="estado" value="Cancelado">
+                                                            <i class="fa-solid fa-times me-1"></i> Cancelar
+                                                        </button>
+                                                    </form>
+                                                    <form action="/editareserva/<%= reserva.Id_Reserva %>" method="POST">
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="fa-solid fa-edit me-1"></i> Actualizar
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pestaña "Cancelado" -->
+                <div class="tab-pane fade" id="cancelado" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%">ID</th>
+                                    <th style="width: 15%">Cliente</th>
+                                    <th style="width: 10%">Habitación</th>
+                                    <th style="width: 10%">Hotel</th>
+                                    <th style="width: 10%">Tarifa</th>
+                                    <th style="width: 10%">Precio Total</th>
+                                    <th style="width: 10%">Check In</th>
+                                    <th style="width: 10%">Check Out</th>
+                                    <th style="width: 20%">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% 
+                                let canceladoReservas = resultados.filter(reserva => reserva.Estado === 'Cancelado');
+                                if (canceladoReservas.length === 0) { 
+                                %>
+                                    <tr>
+                                        <td colspan="9" class="no-data">
+                                            <i class="fa-solid fa-info-circle"></i>
+                                            <p>No hay reservas canceladas</p>
+                                        </td>
+                                    </tr>
+                                <% } else { %>
+                                    <% canceladoReservas.forEach(reserva => { %>
+                                        <tr>
+                                            <td><%= reserva.Id_Reserva %></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fa-solid fa-user me-2 text-primary"></i>
+                                                    <%= reserva.Nom %>
+                                                </div>
+                                            </td>
+                                            <td><%= reserva.Tipo %></td>
+                                            <td><%= reserva.Nombre %></td>
+                                            <td><%= reserva.Temporada %></td>
+                                            <td class="price-column">€<%= reserva.Precio_Total %></td>
+                                            <td>
+                                                <i class="fa-solid fa-calendar-alt me-1 text-primary"></i>
+                                                <%= reserva.Checkin %>
+                                            </td>
+                                            <td>
+                                                <i class="fa-solid fa-calendar-alt me-1 text-danger"></i>
+                                                <%= reserva.Checkout %>
+                                            </td>
+                                            <td>
+                                                <div class="action-btn-group">
+                                                    <form action="/cliente/<%= clienteId %>/estado/<%= reserva.Id_Reserva %>" method="POST">
+                                                        <button type="submit" class="btn btn-success btn-recuperar" name="estado" value="Por pagar">
+                                                            <i class="fa-solid fa-undo me-1"></i> Recuperar
+                                                        </button>
+                                                    </form>
+                                                    <form action="/editareserva/<%= reserva.Id_Reserva %>" method="POST">
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="fa-solid fa-edit me-1"></i> Actualizar
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Botón para cambiar tema -->
+    <button class="theme-toggle" id="theme-toggle" title="Cambiar tema">
+        <i class="fa-solid fa-moon"></i>
+    </button>
+
     <!-- Scripts de Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
+    
+    <!-- Script para alternar tema -->
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // Verificar si hay un tema guardado en localStorage
+        const savedTheme = localStorage.getItem('hotelTheme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        
+        // Actualizar icono según el tema actual
+        if (savedTheme === 'dark') {
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            // Cambiar tema
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('hotelTheme', newTheme);
+            
+            // Cambiar icono
+            if (newTheme === 'dark') {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        });
+    </script>
 </body>
 </html>

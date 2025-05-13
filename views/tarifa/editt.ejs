@@ -1,147 +1,248 @@
 <!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <title>Editar Tarifa</title>  
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/logout"><i class="fa-solid fa-right-from-bracket"></i></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link active" href="/clientes">CLIENTES</a></li>
-          
-            <li class="nav-item">    <% if (user && user.role === 'Hotel') { %>
-              <a class="nav-link active" href="/hotel/<%= user.id_hotel %>">HOTEL</a>
-          <% } else if (user && user.role === 'General') { %>
-            <a class="nav-link active" href="/hoteles">HOTEL</a> %>
-          <% } %></li>
-            <li class="nav-item">          <% if (user && user.role === 'Hotel') { %>
-              <a class="nav-link active" href="/oferta/<%= user.id_hotel %>">OFERTAS</a>
-          <% } else if (user && user.role === 'General') { %>
-            <a class="nav-link active" href="/ofertas">OFERTAS</a> %>
-          <% } %></li>
-            <li class="nav-item"><a class="nav-link active" href="/actividades/">ACTIVIDADES</a></li>
-            <li class="nav-item"><a class="nav-link active" href="/servicio/">SERVICIO</a></li>
-            <li class="nav-item"><a class="nav-link active" href="/tarifa/">TARIFA</a></li>
-            <li class="nav-item"><a class="nav-link active" href="/pais/">PAÍS</a></li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/reservas/">RESERVAS</a>
-            </li>
-          </ul>
-          <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Buscar">
-            <button class="btn btn-outline-success" type="submit">Buscar</button>
-          </form>
-        </div>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  
+  <!-- BoxIcons -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  
+  <!-- CSS personalizado -->
+  <link rel="stylesheet" href="/static/css/formularios.css">
+  
+  <title>Editar Tarifa</title>
+  
+
+</head>
+<body>
+  <% if (tarifa) { %>
+  <div class="container mt-4">
+    <!-- Breadcrumb y título -->
+
+    
+    <!-- Formulario de Edición de Tarifa -->
+    <div class="card border-secondary mb-5">
+      <div class="card-header">
+        <i class='bx bx-money-withdraw me-2'></i> Editar Tarifa
       </div>
-    </nav>
-
-    <% if (tarifa) { %>
-    <div class="container mt-4">
-      <div class="card border-secondary">
-        <div class="card-header">EDITAR TARIFA</div>
-        <div class="card-body">
-          <form action="/updatet" method="POST">
-            <input type="hidden" id="Id_Tarifa" name="Id_Tarifa" value="<%= tarifa.Id_Tarifa %>">
+      <div class="card-body">
+        <form action="/updatet" method="POST" id="tarifaForm">
+          <input type="hidden" id="Id_Tarifa" name="Id_Tarifa" value="<%= tarifa.Id_Tarifa %>">
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Id_Hotel" class="form-label required-field">Hotel</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-hotel'></i></span>
+                <select name="Id_Hotel" id="Id_Hotel" class="form-select" required>
+                  <% hoteles.forEach(hotel => { %>
+                    <option value="<%= hotel.Id_Hotel %>" <%= hotel.Id_Hotel === tarifa.Id_Hotel ? 'selected' : '' %>>
+                      <%= hotel.Nombre %>
+                    </option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
             
-            <!-- Selección de Hotel -->
-            <div class="mb-3">
-              <label for="Id_Hotel" class="form-label">Hotel</label>
-              <select name="Id_Hotel" id="Id_Hotel" class="form-select">
-                <% hoteles.forEach(hotel => { %>
-                  <option value="<%= hotel.Id_Hotel %>" <%= hotel.Id_Hotel === tarifa.Id_Hotel ? 'selected' : '' %>><%= hotel.Nombre %></option>
-                <% }); %>
-              </select>
+            <div class="col-md-6 mb-3">
+              <label for="Id_Habitacion" class="form-label required-field">Habitación</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-bed'></i></span>
+                <select name="Id_Habitacion" id="Id_Habitacion" class="form-select" required>
+                  <% habitaciones.forEach(habitacion => { %>
+                    <option value="<%= habitacion.Id_Habitaciones %>" 
+                            data-tipo="<%= habitacion.Tipo %>" 
+                            <%= habitacion.Id_Habitaciones === tarifa.Id_Habitacion ? 'selected' : '' %>>
+                      <%= habitacion.Numero_Habitacion %> - <%= habitacion.Tipo %>
+                    </option>
+                  <% }); %>
+                </select>
+              </div>
             </div>
-
-            <!-- Selección de Habitación -->
-            <div class="mb-3">
-              <label for="Id_Habitacion" class="form-label">Habitación</label>
-              <select name="Id_Habitacion" id="Id_Habitacion" class="form-select">
-                <% habitaciones.forEach(habitacion => { %>
-                  <option value="<%= habitacion.Id_Habitaciones %>" data-tipo="<%= habitacion.Tipo %>" <%= habitacion.Id_Habitaciones === tarifa.Id_Habitacion ? 'selected' : '' %>>
-                    <%= habitacion.Numero_Habitacion %>
-                  </option>
-                <% }); %>
-              </select>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Id_Actividad" class="form-label required-field">Actividad</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-calendar-event'></i></span>
+                <select name="Id_Actividad" id="Id_Actividad" class="form-select" required>
+                  <% actividades.forEach(actividad => { %>
+                    <option value="<%= actividad.Id_Actividades %>" 
+                            <%= actividad.Id_Actividades === tarifa.Id_Actividad ? 'selected' : '' %>>
+                      <%= actividad.Actividad %>
+                    </option>
+                  <% }); %>
+                </select>
+              </div>
             </div>
-
-            <!-- Selección de Actividad -->
-            <div class="mb-3">
-              <label for="Id_Actividad" class="form-label">Actividad</label>
-              <select name="Id_Actividad" id="Id_Actividad" class="form-select">
-                <% actividades.forEach(actividad => { %>
-                  <option value="<%= actividad.Id_Actividades %>" <%= actividad.Id_Actividades === tarifa.Id_Actividad ? 'selected' : '' %>>
-                    <%= actividad.Actividad %>
-                  </option>
-                <% }); %>
-              </select>
+            
+            <div class="col-md-6 mb-3">
+              <label for="Id_Servicios" class="form-label required-field">Servicio</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-server'></i></span>
+                <select name="Id_Servicios" id="Id_Servicios" class="form-select" required>
+                  <% servicios.forEach(servicio => { %>
+                    <option value="<%= servicio.Id_Servicio %>" 
+                            <%= servicio.Id_Servicio === tarifa.Id_Servicio ? 'selected' : '' %>>
+                      <%= servicio.Servicio %>
+                    </option>
+                  <% }); %>
+                </select>
+              </div>
             </div>
-
-            <!-- Selección de Servicio -->
-            <div class="mb-3">
-              <label for="Id_Servicios" class="form-label">Servicio</label>
-              <select name="Id_Servicios" id="Id_Servicios" class="form-select">
-                <% servicios.forEach(servicio => { %>
-                  <option value="<%= servicio.Id_Servicio %>" <%= servicio.Id_Servicio === tarifa.Id_Servicio ? 'selected' : '' %>>
-                    <%= servicio.Servicio %>
-                  </option>
-                <% }); %>
-              </select>
-            </div>
-
-            <!-- Campo Tipo de Habitación -->
-            <div class="mb-3">
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
               <label for="Tipo_Habitacion" class="form-label">Tipo de Habitación</label>
-              <input type="text" class="form-control" id="Tipo_Habitacion" name="Tipo_Habitacion" value="<%= tarifa.Tipo_Habitacion || '' %>" readonly>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-building-house'></i></span>
+                <input type="text" class="form-control" id="Tipo_Habitacion" name="Tipo_Habitacion" 
+                       value="<%= tarifa.Tipo_Habitacion || '' %>" readonly>
+              </div>
+              <small class="text-muted">Este campo se actualiza automáticamente al seleccionar una habitación</small>
             </div>
-
-            <!-- Campo Temporada -->
-            <div class="mb-3">
-              <label for="Temporada" class="form-label">Temporada</label>
-              <input type="text" class="form-control" id="Temporada" name="Temporada" value="<%= tarifa.Temporada %>">
+            
+            <div class="col-md-6 mb-3">
+              <label for="Temporada" class="form-label required-field">Temporada</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-calendar'></i></span>
+                <select class="form-select" id="Temporada" name="Temporada" required>
+                  <option value="Alta" <%= tarifa.Temporada === 'Alta' ? 'selected' : '' %>>Alta</option>
+                  <option value="Media" <%= tarifa.Temporada === 'Media' ? 'selected' : '' %>>Media</option>
+                  <option value="Baja" <%= tarifa.Temporada === 'Baja' ? 'selected' : '' %>>Baja</option>
+                </select>
+              </div>
             </div>
-
-            <!-- Campo Precio -->
-            <div class="mb-3">
-              <label for="Precio" class="form-label">Precio</label>
-              <input type="number" class="form-control" id="Precio" name="Precio" value="<%= tarifa.Precio %>">
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="Precio" class="form-label required-field">Precio</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class='bx bx-euro'></i></span>
+                <input type="number" class="form-control" id="Precio" name="Precio" 
+                       step="0.01" min="0" required value="<%= tarifa.Precio %>">
+              </div>
             </div>
-
-            <!-- Botones -->
-            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+          
+          <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class='bx bx-save me-1'></i> Guardar Cambios
+            </button>
             <% if (user && user.role === 'Hotel') { %>
-              <a class="btn btn-secondary" href="/tarifas/<%= user.id_hotel %>">Cancelar</a>
-          <% } else if (user && user.role === 'General') { %>
-            <a href="/tarifa/" class="btn btn-secondary">Cancelar</a>
-          <% } %>
-          </form>
-        </div>
+              <a class="btn btn-secondary" href="/tarifas/<%= user.id_hotel %>">
+                <i class='bx bx-arrow-back me-1'></i> Cancelar
+              </a>
+            <% } else if (user && user.role === 'General') { %>
+              <a href="/tarifa/" class="btn btn-secondary">
+                <i class='bx bx-arrow-back me-1'></i> Cancelar
+              </a>
+            <% } %>
+          </div>
+        </form>
       </div>
     </div>
-    <% } %>
+  </div>
+  <% } %>
+  
+  <!-- Botón para cambiar tema -->
+  <button class="theme-toggle" id="themeToggle">
+    <i class='bx bx-moon'></i>
+  </button>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const selectHabitacion = document.getElementById("Id_Habitacion");
-        const inputTipoHabitacion = document.getElementById("Tipo_Habitacion");
-
+  <!-- Bootstrap Bundle con Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  
+  <!-- Script personalizado -->
+  <script>
+    // Theme toggle
+    document.getElementById('themeToggle').addEventListener('click', function() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      // Cambiar el icono
+      this.querySelector('i').classList.toggle('bx-moon');
+      this.querySelector('i').classList.toggle('bx-sun');
+      
+      // Guardar preferencia en localStorage
+      localStorage.setItem('theme', newTheme);
+    });
+    
+    // Cargar tema guardado
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      
+      // Actualizar icono según tema
+      if (savedTheme === 'dark') {
+        document.querySelector('#themeToggle i').classList.remove('bx-moon');
+        document.querySelector('#themeToggle i').classList.add('bx-sun');
+      }
+      
+      // Validación básica del formulario
+      const form = document.getElementById('tarifaForm');
+      if (form) {
+        form.addEventListener('submit', function(event) {
+          let valid = true;
+          const requiredInputs = document.querySelectorAll('input[required], select[required]');
+          
+          requiredInputs.forEach(input => {
+            if (!input.value.trim()) {
+              valid = false;
+              input.classList.add('is-invalid');
+              
+              // Crear mensaje de error si no existe
+              if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('invalid-feedback')) {
+                const feedback = document.createElement('div');
+                feedback.classList.add('invalid-feedback');
+                feedback.textContent = 'Este campo es obligatorio';
+                input.parentNode.appendChild(feedback);
+              }
+            } else {
+              input.classList.remove('is-invalid');
+              input.classList.add('is-valid');
+            }
+          });
+          
+          if (!valid) {
+            event.preventDefault();
+          }
+        });
+        
+        // Eliminar clases de validación cuando se modifica el campo
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+          input.addEventListener('input', function() {
+            this.classList.remove('is-invalid');
+            if (this.value.trim()) {
+              this.classList.add('is-valid');
+            }
+          });
+        });
+      }
+      
+      // Actualizar el campo Tipo_Habitacion cuando cambia la habitación
+      const selectHabitacion = document.getElementById("Id_Habitacion");
+      const inputTipoHabitacion = document.getElementById("Tipo_Habitacion");
+      
+      if (selectHabitacion && inputTipoHabitacion) {
         function actualizarTipoHabitacion() {
           const selectedOption = selectHabitacion.options[selectHabitacion.selectedIndex];
           inputTipoHabitacion.value = selectedOption.getAttribute("data-tipo") || "";
         }
-
+        
         selectHabitacion.addEventListener("change", actualizarTipoHabitacion);
         actualizarTipoHabitacion(); // Actualizar al cargar la página
-      });
-    </script>
-  </body>
+      }
+    });
+  </script>
+</body>
 </html>

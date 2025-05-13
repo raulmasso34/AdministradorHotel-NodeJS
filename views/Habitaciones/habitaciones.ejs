@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="../../public/static/css/habitaciones.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+    <link rel="stylesheet" href="/static/css/index.css">
+
     <!-- DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.bootstrap5.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -106,5 +107,72 @@
             });
         }
     </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.bootstrap5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.14.0/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="/static/js/dark.js">
+    <script>
+        function confirmar(Id_Client) {
+            Swal.fire({
+                title: "¿Quieres eliminar el cliente?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirmar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire("Eliminado!", "El cliente con ID " + Id_Client + " ha sido eliminado.", "success").then(() => {
+                        window.location.href = '/delete/' + Id_Client;
+                    });
+                } else {
+                    Swal.fire("Acción cancelada", "", "info");
+                }
+            });
+        }
+
+        // Inicializar DataTable
+        const table = new DataTable('#users');
+
+        // Toggle password
+        $('#users tbody').on('click', '.toggle-password', function () {
+            const passwordSpan = $(this).prev('.password-hidden');
+            const isHidden = passwordSpan.text() === '********';
+            passwordSpan.text(isHidden ? $(this).data('password') : '********');
+            $(this).html(isHidden ? '<i class="fa-solid fa-eye-slash"></i>' : '<i class="fa-solid fa-eye"></i>');
+        });
+    </script>
+
+    <script>// Añade este script COLOR DARK
+       document.addEventListener('DOMContentLoaded', function() {
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.documentElement;
+    
+    // Cargar tema guardado o detectar preferencia del sistema
+    const savedTheme = localStorage.getItem('theme') || 
+                      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    body.setAttribute('data-theme', savedTheme);
+    updateToggleIcon(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = body.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        
+        body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateToggleIcon(newTheme);
+    });
+
+    function updateToggleIcon(theme) {
+        const icon = themeToggle.querySelector('i');
+        icon.className = theme === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        themeToggle.title = theme === 'light' ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro';
+    }
+});
+        
+        
+        </script>   
 </body>
 </html>

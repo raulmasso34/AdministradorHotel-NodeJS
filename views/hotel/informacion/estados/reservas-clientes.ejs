@@ -4,97 +4,354 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estado de Reservas</title>
-    <link rel="stylesheet" href="../../../static/css/hotel/reservas-clientes.ss">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/static/css/estados.css">
+    <style>
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .badge-counter {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50%;
+        }
+        
+        .hotel-title {
+            color: var(--primary-color);
+            margin-top: 0.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .exit-btn {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 0.6rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .exit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(239, 68, 68, 0.3);
+        }
+        
+        .tab-container {
+            background-color: var(--bg-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .nav-tabs {
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+        
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .stats-card {
+            background-color: var(--bg-color);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0;
+            color: var(--primary-color);
+        }
+        
+        .stats-label {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+        
+        .theme-toggle {
+            width: 45px;
+            height: 45px;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .stats-card {
+                margin-bottom: 1rem;
+            }
+            
+            .exit-btn {
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+            }
+        }
+    </style>
 </head>
 <body class="bg-light">
-
-    <a href="/menu/<%= hotelId %>" class="btn btn-sm btn-danger" title="Exit">
-        <i class="fa-solid fa-right-from-bracket"></i>
+    <!-- Botón de salida con mejor posicionamiento -->
+    <a href="/menu/<%= hotelId %>" class="btn btn-danger exit-btn" title="Volver al menú">
+        <i class="fa-solid fa-right-from-bracket me-1"></i> Salir
     </a>
+
     <div class="container mt-5">
-        <h2 class="text-center">🛬 Estado de Reservas del Hotel <%= nombreHotel %> - Hoy</h2>
+        <!-- Título con mejor formato -->
+        <h2 class="hotel-title">
+            <i class="fa-solid fa-plane-arrival me-2"></i>
+            Estado de Reservas - <%= nombreHotel %>
+            <div class="text-muted fs-6">Hoy, <%= new Date().toLocaleDateString('es-ES', {day: 'numeric', month: 'long', year: 'numeric'}) %></div>
+        </h2>
 
-        <!-- Pestañas de Bootstrap -->
-        <ul class="nav nav-tabs" id="reservasTab" role="tablist">
-            <li class="nav-item">
-                <button class="nav-link active" id="llegaron-tab" data-bs-toggle="tab" data-bs-target="#llegaron" type="button" role="tab">Reservas Llegaron</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" id="no-llegaron-tab" data-bs-toggle="tab" data-bs-target="#no-llegaron" type="button" role="tab">Reservas No Llegaron</button>
-            </li>
-        </ul>
-
-        <!-- Contenido de las pestañas -->
-        <div class="tab-content mt-3" id="reservasTabContent">
-            
-            <!-- Pestaña "Llegaron" -->
-            <div class="tab-pane fade show active" id="llegaron" role="tabpanel">
-                <table class="table table-bordered mt-3">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Cliente</th>
-                            <th>Fecha de Check-in</th>
-                            <th>Estado de Llegada</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% reservasLlegaron.forEach((reserva, index) => { %>
-                        <tr>
-                            <td><%= index + 1 %></td>
-                            <td><%= reserva.Nom %></td>
-                            <td><%= reserva.Checkin %></td>
-                            <td>✅ Llegó</td>
-                        </tr>
-                        <% }); %>
-                    </tbody>
-                </table>
+        <!-- Resumen estadístico -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="stats-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="stats-number"><%= reservasLlegaron.length %></p>
+                            <p class="stats-label">Reservas que llegaron</p>
+                        </div>
+                        <div class="bg-success bg-opacity-10 p-3 rounded-circle">
+                            <i class="fa-solid fa-check text-success fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <!-- Pestaña "No Llegaron" -->
-            <div class="tab-pane fade" id="no-llegaron" role="tabpanel">
-                <table class="table table-bordered mt-3">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Cliente</th>
-                            <th>Fecha de Check-in</th>
-                            <th>Estado de Llegada</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% reservasNoLlegaron.forEach((reserva, index) => { %>
-                        <tr>
-                            <td><%= index + 1 %></td>
-                            <td><%= reserva.Nom %></td>
-                            <td><%= reserva.Checkin %></td>
-                            <td>
-                                <%= reserva.EstadoLlegada ? reserva.EstadoLlegada : 'Sin Estado' %>
-                            </td>
-                            <td>
-                                <form action="/estados/actualizar-llegada" method="POST" class="d-inline">
-                                    <input type="hidden" name="idReserva" value="<%= reserva.Id_Reserva %>">
-                                    <% if (!reserva.EstadoLlegada) { %>
-                                        <button type="submit" name="estado" value="No llegó" class="btn btn-danger btn-sm">No llegó</button>
-                                    <% } else { %>
-                                        <button type="submit" name="estado" value="Llegó" class="btn btn-success btn-sm">Llegó</button>
-                                    <% } %>
-                                </form>
-                            </td>
-                        </tr>
-                        <% }); %>
-                    </tbody>
-                </table>
+            <div class="col-md-6">
+                <div class="stats-card" style="border-left-color: var(--danger-color);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="stats-number" style="color: var(--danger-color);"><%= reservasNoLlegaron.length %></p>
+                            <p class="stats-label">Reservas pendientes</p>
+                        </div>
+                        <div class="bg-danger bg-opacity-10 p-3 rounded-circle">
+                            <i class="fa-solid fa-clock text-danger fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
 
+        <!-- Contenedor principal con sombra -->
+        <div class="tab-container">
+            <!-- Pestañas de Bootstrap mejoradas -->
+            <ul class="nav nav-tabs" id="reservasTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active d-flex align-items-center" id="llegaron-tab" data-bs-toggle="tab" data-bs-target="#llegaron" type="button" role="tab">
+                        <i class="fa-solid fa-check-circle me-2 text-success"></i>
+                        Reservas Llegaron
+                        <span class="badge bg-success ms-2 rounded-pill"><%= reservasLlegaron.length %></span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link d-flex align-items-center" id="no-llegaron-tab" data-bs-toggle="tab" data-bs-target="#no-llegaron" type="button" role="tab">
+                        <i class="fa-solid fa-clock me-2 text-danger"></i>
+                        Reservas No Llegaron
+                        <span class="badge bg-danger ms-2 rounded-pill"><%= reservasNoLlegaron.length %></span>
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Contenido de las pestañas -->
+            <div class="tab-content mt-3" id="reservasTabContent">
+                
+                <!-- Pestaña "Llegaron" -->
+                <div class="tab-pane fade show active" id="llegaron" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th width="5%">#</th>
+                                    <th width="40%">Cliente</th>
+                                    <th width="30%">Fecha de Check-in</th>
+                                    <th width="25%">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (reservasLlegaron.length === 0) { %>
+                                    <tr>
+                                        <td colspan="4" class="text-center py-5">
+                                            <i class="fa-solid fa-info-circle text-primary fa-2x mb-3"></i>
+                                            <p class="mb-0">No hay reservas que hayan llegado hoy</p>
+                                        </td>
+                                    </tr>
+                                <% } else { %>
+                                    <% reservasLlegaron.forEach((reserva, index) => { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <i class="fa-solid fa-user me-2 text-primary"></i>
+                                                <strong><%= reserva.Nom %></strong>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <i class="fa-solid fa-calendar-alt me-2 text-secondary"></i>
+                                            <%= reserva.Checkin %>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success status-badge">
+                                                <i class="fa-solid fa-check me-1"></i> Llegó
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pestaña "No Llegaron" -->
+                <div class="tab-pane fade" id="no-llegaron" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th width="5%">#</th>
+                                    <th width="30%">Cliente</th>
+                                    <th width="20%">Fecha de Check-in</th>
+                                    <th width="20%">Estado</th>
+                                    <th width="25%">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (reservasNoLlegaron.length === 0) { %>
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5">
+                                            <i class="fa-solid fa-check-circle text-success fa-2x mb-3"></i>
+                                            <p class="mb-0">¡Todas las reservas de hoy han llegado!</p>
+                                        </td>
+                                    </tr>
+                                <% } else { %>
+                                    <% reservasNoLlegaron.forEach((reserva, index) => { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <i class="fa-solid fa-user me-2 text-primary"></i>
+                                                <strong><%= reserva.Nom %></strong>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <i class="fa-solid fa-calendar-alt me-2 text-secondary"></i>
+                                            <%= reserva.Checkin %>
+                                        </td>
+                                        <td>
+                                            <% if (!reserva.EstadoLlegada) { %>
+                                                <span class="badge bg-warning status-badge">
+                                                    <i class="fa-solid fa-question-circle me-1"></i> Pendiente
+                                                </span>
+                                            <% } else { %>
+                                                <span class="badge bg-danger status-badge">
+                                                    <i class="fa-solid fa-times me-1"></i> <%= reserva.EstadoLlegada %>
+                                                </span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <form action="/estados/actualizar-llegada" method="POST" class="d-inline">
+                                                <input type="hidden" name="idReserva" value="<%= reserva.Id_Reserva %>">
+                                                <% if (!reserva.EstadoLlegada) { %>
+                                                    <button type="submit" name="estado" value="No llegó" class="btn btn-danger btn-sm me-1">
+                                                        <i class="fa-solid fa-times me-1"></i> No llegó
+                                                    </button>
+                                                    <button type="submit" name="estado" value="Llegó" class="btn btn-success btn-sm">
+                                                        <i class="fa-solid fa-check me-1"></i> Llegó
+                                                    </button>
+                                                <% } else { %>
+                                                    <button type="submit" name="estado" value="Llegó" class="btn btn-success btn-sm w-100">
+                                                        <i class="fa-solid fa-check me-1"></i> Marcar como llegado
+                                                    </button>
+                                                <% } %>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Botón para cambiar tema -->
+    <button class="theme-toggle" id="theme-toggle" title="Cambiar tema">
+        <i class="fa-solid fa-moon"></i>
+    </button>
+
     <!-- Scripts de Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script para alternar tema -->
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // Verificar si hay un tema guardado en localStorage
+        const savedTheme = localStorage.getItem('hotelTheme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        
+        // Actualizar icono según el tema actual
+        if (savedTheme === 'dark') {
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            // Cambiar tema
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('hotelTheme', newTheme);
+            
+            // Cambiar icono
+            if (newTheme === 'dark') {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        });
+    </script>
 </body>
-</html>
+</html>                         
