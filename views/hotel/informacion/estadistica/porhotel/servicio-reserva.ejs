@@ -1,89 +1,528 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estadísticas de Actividades</title>
+    <title>Estadísticas de Servicios</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- BoxIcons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body class="bg-light">
+    
+    <style>
+        :root {
+            /* Light Theme */
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --primary-color: #4169E1; /* Azul real más brillante */
+            --secondary-color: #6C7BFF;
+            --accent-color: #62C6FF;
+            --border-color: #E2E8F0;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05);
+            --transition-normal: all 0.3s ease;
+            --yoga-color: #C08ADD; /* Color lila para Yoga */
+            --masaje-color: #25BBA0; /* Color turquesa para Masaje */
+            --yoga2-color: #343B8C; /* Color azul oscuro para segundo Yoga */
+            --actividades-color: #56D6A0; /* Color verde para Actividades niños */
+            --total-color: #4169E1; /* Azul para el total */
+        }
 
-    <div class="container mt-5">
-        <div class="card shadow-lg p-4">
-            <h2 class="text-center mb-4">📊 Estadísticas de Actividades Reservadas</h2>
-            <p class="text-center">ID del Hotel: <strong><%= hotelId %></strong></p>
+        [data-theme="dark"] {
+            /* Dark Theme */
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #5E81F4;
+            --secondary-color: #7986CB;
+            --accent-color: #81D4FA;
+            --border-color: #2d2d2d;
+            --text-color: #f1f1f1;
+            --text-muted: #9e9e9e;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.2);
+        }
 
-            <canvas id="graficoActividades"></canvas>
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: var(--transition-normal);
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
 
-            <a href="/menu-estadistica-hotel/<%= hotelId %>" class="btn btn-secondary mt-3">⬅️ Volver al Menú</a>
-        </div>
-    </div>
+        .container {
+            max-width: 1400px;
+            width: 95%;
+            padding: 0 15px;
+        }
 
-    <script>
-    // Datos enviados desde Node.js
-    const datos = JSON.parse('<%- JSON.stringify(datos) %>');// No tocar, funciona aunque dé error
+        .card {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            transition: var(--transition-normal);
+            padding: 2rem !important;
+        }
 
-// Almacén de colores fijos por actividad
-const coloresFijos = JSON.parse(localStorage.getItem('coloresActividades')) || {};
+        .page-title {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
 
-// Función para generar colores aleatorios en formato hexadecimal
-function generarColorAleatorio() {
-    return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-}
+        .page-title i {
+            font-size: 1.8rem;
+        }
 
-// Asignar colores fijos a cada actividad
-datos.forEach(item => {
-    if (!coloresFijos[item.Servicio]) {
-        coloresFijos[item.Servicio] = generarColorAleatorio();
-    }
-});
+        .hotel-id-badge {
+            background-color: #f1f5ff;
+            border-radius: 8px;
+            padding: 8px 16px;
+            display: inline-block;
+            margin: 0 auto 2rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            border: none;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.95rem;
+        }
 
-// Guardar en localStorage para persistencia
-localStorage.setItem('coloresActividades', JSON.stringify(coloresFijos));
+        /* Estilo para las tarjetas de estadísticas */
+        .stats-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
 
-// Extraer etiquetas (actividades) y valores (cantidad de reservas)
-const etiquetas = datos.map(item => item.actividad);
-const valores = datos.map(item => item.total_reservas);
+        .stat-card {
+            flex: 1 1 180px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 140px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            border-top-width: 0;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
 
-// Calcular el máximo y aumentarlo en un 5%
-const maximoReservas = Math.max(...valores);
-const topeEjeY = Math.ceil(maximoReservas * 1.5); // Aumenta un 5% y redondea hacia arriba
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
 
-// Crear datasets individuales para cada actividad con colores fijos
-const datasets = datos.map(item => ({
-    label: item.Servicio, // Nombre de la actividad en la leyenda
-    data: [item.total_reservas], // Se muestra como un solo dato
-    backgroundColor: coloresFijos[item.Servicio], // Color fijo para cada actividad
-    borderWidth: 1
-}));
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: var(--primary-color);
+        }
 
-// Configurar gráfico
-const ctx = document.getElementById('graficoActividades').getContext('2d');
-new Chart(ctx, {
-    type: 'bar',  // Tipo de gráfico
-    data: {
-        labels: ['Reservas'], // Se agrupa en una única barra con varias actividades
-        datasets: datasets // Se pasan los datasets generados dinámicamente
-    },
-    options: {
-        responsive: true,
-        scales: {
-            y: { 
-                beginAtZero: true,
-                max: topeEjeY // Aplica el nuevo tope del 5% superior
+        .stat-card.total::before {
+            background-color: var(--total-color);
+        }
+
+        .stat-card.yoga::before {
+            background-color: var(--yoga-color);
+        }
+
+        .stat-card.masaje::before {
+            background-color: var(--masaje-color);
+        }
+
+        .stat-card.yoga2::before {
+            background-color: var(--yoga2-color);
+        }
+
+        .stat-card.actividades::before {
+            background-color: var(--actividades-color);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .stat-card.total .stat-number {
+            color: var(--total-color);
+        }
+
+        .stat-card.yoga .stat-number {
+            color: var(--yoga-color);
+        }
+
+        .stat-card.masaje .stat-number {
+            color: var(--masaje-color);
+        }
+
+        .stat-card.yoga2 .stat-number {
+            color: var(--yoga2-color);
+        }
+
+        .stat-card.actividades .stat-number {
+            color: var(--actividades-color);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+        }
+
+        /* Estilo para el contenedor del gráfico */
+        .chart-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+            height: 400px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Botones de navegación */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-normal);
+            border: none;
+            z-index: 100;
+            font-size: 1.2rem;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Toggle Dark/Light Mode */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+            border: none;
+            font-size: 1.2rem;
+            transition: var(--transition-normal);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Media queries para pantallas más grandes */
+        @media (min-width: 992px) {
+            .stat-card {
+                flex: 1 1 200px;
             }
-        },
-        plugins: {
-            legend: {
-                display: true, // Muestra la leyenda con los colores generados
-                position: 'top' // Puedes cambiarlo a 'bottom', 'left' o 'right'
+            
+            .chart-container {
+                height: 450px;
             }
         }
-    }
-});
 
+        @media (min-width: 1400px) {
+            .chart-container {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Botón de retroceso -->
+    <a href="/menu-estadistica-hotel/<%= hotelId %>" class="back-button" title="Volver al menú">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    
+    <div class="container mt-5">
+        <div class="card p-4">
+            <div class="text-center">
+                <h1 class="page-title">
+                    <i class="bx bx-bar-chart-alt"></i> Estadísticas de Servicios
+                </h1>
+                
+            
+            </div>
+            
+            <div id="statsCards" class="stats-cards">
+                <!-- Se llenará dinámicamente con JavaScript -->
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="graficoActividades"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Botón para cambiar tema -->
+    <button class="theme-toggle" id="themeToggle">
+        <i class="bx bx-moon"></i>
+    </button>
+
+    <script>
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            
+            // Cambiar el icono
+            this.querySelector('i').classList.toggle('bx-moon');
+            this.querySelector('i').classList.toggle('bx-sun');
+            
+            // Guardar preferencia en localStorage
+            localStorage.setItem('theme', newTheme);
+            
+            // Actualizar el gráfico
+            actualizarGrafico();
+        });
+        
+        // Cargar tema guardado
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            // Actualizar icono según tema
+            if (savedTheme === 'dark') {
+                document.querySelector('#themeToggle i').classList.remove('bx-moon');
+                document.querySelector('#themeToggle i').classList.add('bx-sun');
+            }
+        });
+        
+        // Datos enviados desde Node.js
+        const datos = JSON.parse('<%- JSON.stringify(datos) %>');
+        
+        // Almacén de colores fijos por actividad
+        const coloresFijos = JSON.parse(localStorage.getItem('coloresActividades')) || {};
+        
+        // Función para generar colores aleatorios en formato hexadecimal
+        function generarColorAleatorio() {
+            return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+        }
+        
+        // Verificación y corrección de datos
+        let propActividad = 'actividad';
+        let propServicio = 'Servicio';
+        let propTotal = 'total_reservas';
+        
+        // Verificamos las propiedades existentes en el primer elemento
+        if (datos.length > 0) {
+            const primerItem = datos[0];
+            if (primerItem.hasOwnProperty('actividad')) {
+                propActividad = 'actividad';
+            }
+            if (primerItem.hasOwnProperty('Servicio')) {
+                propServicio = 'Servicio';
+            }
+            if (primerItem.hasOwnProperty('total_reservas')) {
+                propTotal = 'total_reservas';
+            }
+        }
+        
+        // Asignar colores fijos a cada actividad
+        datos.forEach(item => {
+            const actividad = item[propServicio] || item[propActividad];
+            if (!coloresFijos[actividad]) {
+                // Generar un color aleatorio para cada nueva actividad
+                coloresFijos[actividad] = generarColorAleatorio();
+            }
+        });
+        
+        // Guardar en localStorage para persistencia
+        localStorage.setItem('coloresActividades', JSON.stringify(coloresFijos));
+        
+        // Función para crear las tarjetas de estadísticas
+        function crearTarjetasEstadisticas() {
+            const statsContainer = document.getElementById('statsCards');
+            const totalReservas = datos.reduce((acc, item) => acc + parseInt(item[propTotal]), 0);
+            
+            // Crear tarjeta para el total de reservas
+            const totalCard = document.createElement('div');
+            totalCard.className = 'stat-card total';
+            totalCard.innerHTML = `
+                <div class="stat-number">${totalReservas}</div>
+                <div class="stat-label">TOTAL RESERVAS</div>
+            `;
+            statsContainer.appendChild(totalCard);
+            
+            // Crear tarjetas para cada actividad
+            datos.forEach(item => {
+                const actividad = item[propServicio] || item[propActividad];
+                
+                const card = document.createElement('div');
+                card.className = 'stat-card';
+                card.innerHTML = `
+                    <div class="stat-number">${item[propTotal]}</div>
+                    <div class="stat-label">${actividad}</div>
+                `;
+                
+                // Aplicar el color personalizado a la tarjeta
+                const color = coloresFijos[actividad];
+                card.style.setProperty('--card-color', color);
+                card.querySelector('.stat-number').style.color = color;
+                card.style.borderTop = `5px solid ${color}`;
+                
+                statsContainer.appendChild(card);
+            });
+        }
+        
+        // Función para actualizar el gráfico
+        function actualizarGrafico() {
+            // Preparar datos para el gráfico
+            const etiquetas = datos.map(item => item[propServicio] || item[propActividad]);
+            const valores = datos.map(item => item[propTotal]);
+            
+            // Generar colores para las barras
+            const coloresFondo = etiquetas.map(etiqueta => coloresFijos[etiqueta]);
+            
+            // Configurar gráfico
+            const ctx = document.getElementById('graficoActividades').getContext('2d');
+            
+            // Destruir gráfico anterior si existe
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+            
+            // Crear el gráfico de barras
+            window.myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: etiquetas,
+                    datasets: [{
+                        label: 'Reservas de Servicios',
+                        data: valores,
+                        backgroundColor: coloresFondo,
+                        borderColor: coloresFondo,
+                        borderWidth: 0,
+                        borderRadius: 4,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#333',
+                            bodyColor: '#666',
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            padding: 10,
+                            cornerRadius: 6,
+                            displayColors: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            crearTarjetasEstadisticas();
+            actualizarGrafico();
+        });
     </script>
-
 </body>
 </html>

@@ -1,89 +1,529 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estadísticas de Actividades</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- BoxIcons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body class="bg-light">
+    
+    <style>
+        :root {
+            /* Light Theme */
+            --bg-color: #ffffff;
+            --sidebar-bg: #1e3d59;
+            --card-bg: #ffffff;
+            --table-header-bg: #2a3042;
+            --primary-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --accent-color: #60a5fa;
+            --menu-hover: rgba(37, 99, 235, 0.1);
+            --menu-title-color: #8f9bb3;
+            --menu-item-color: #2d3748;
+            --container-bg: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-color: #2d3748;
+            --text-muted: #6b7280;
+            --sidebar-text: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --transition-normal: all 0.3s ease;
+            --chart-bg: #f8fafc;
+        }
 
-    <div class="container mt-5">
-        <div class="card shadow-lg p-4">
-            <h2 class="text-center mb-4">📊 Estadísticas de Actividades Reservadas</h2>
-            <p class="text-center">ID del Hotel: <strong><%= hotelId %></strong></p>
+        [data-theme="dark"] {
+            /* Dark Theme */
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --sidebar-bg: #1e293b;
+            --table-header-bg: #334155;
+            --primary-color: #3b82f6;
+            --secondary-color: #60a5fa;
+            --accent-color: #93c5fd;
+            --menu-hover: rgba(59, 130, 246, 0.1);
+            --menu-title-color: #94a3b8;
+            --menu-item-color: #e2e8f0;
+            --container-bg: #1e293b;
+            --border-color: #475569;
+            --text-color: #f8fafc;
+            --text-muted: #cbd5e1;
+            --sidebar-text: #f1f5f9;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.25), 0 4px 6px -2px rgba(0,0,0,0.15);
+            --chart-bg: #0f172a;
+        }
 
-            <canvas id="graficoActividades"></canvas>
+        body {
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: var(--transition-normal);
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
 
-            <a href="/menu-estadistica-hotel/<%= hotelId %>" class="btn btn-secondary mt-3">⬅️ Volver al Menú</a>
-        </div>
-    </div>
+        .container {
+            max-width: 1400px; /* Aumentar el ancho máximo del contenedor */
+            width: 95%; /* Usar más del ancho de la pantalla */
+            padding: 0 15px;
+        }
 
-    <script>
-    // Datos enviados desde Node.js
-    const datos = JSON.parse('<%- JSON.stringify(datos) %>');// No tocar, funciona aunque dé error
+        .card {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            transition: var(--transition-normal);
+            padding: 2rem !important; /* Aumentar el padding interno */
+        }
 
-// Almacén de colores fijos por actividad
-const coloresFijos = JSON.parse(localStorage.getItem('coloresActividades')) || {};
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
 
-// Función para generar colores aleatorios en formato hexadecimal
-function generarColorAleatorio() {
-    return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-}
+        .card-title {
+            position: relative;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
 
-// Asignar colores fijos a cada actividad
-datos.forEach(item => {
-    if (!coloresFijos[item.actividad]) {
-        coloresFijos[item.actividad] = generarColorAleatorio();
-    }
-});
+        .card-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
 
-// Guardar en localStorage para persistencia
-localStorage.setItem('coloresActividades', JSON.stringify(coloresFijos));
+        .hotel-id {
+            background-color: var(--menu-hover);
+            border-radius: 8px;
+            padding: 8px 16px;
+            display: inline-block;
+            margin-bottom: 2rem; /* Aumentar margen inferior */
+            color: var(--primary-color);
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+        }
 
-// Extraer etiquetas (actividades) y valores (cantidad de reservas)
-const etiquetas = datos.map(item => item.actividad);
-const valores = datos.map(item => item.total_reservas);
+        .chart-container {
+            position: relative;
+            margin: 30px auto; /* Aumentar márgenes */
+            height: 500px; /* Aumentar altura */
+            max-width: 1200px; /* Aumentar ancho máximo */
+            width: 100%; /* Usar todo el ancho disponible */
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px; /* Aumentar padding */
+            box-shadow: var(--shadow-md);
+        }
 
-// Calcular el máximo y aumentarlo en un 5%
-const maximoReservas = Math.max(...valores);
-const topeEjeY = Math.ceil(maximoReservas * 1.5); // Aumenta un 5% y redondea hacia arriba
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            gap: 8px;
+            background-color: var(--sidebar-bg);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            margin-top: 2rem; /* Aumentar margen superior */
+        }
 
-// Crear datasets individuales para cada actividad con colores fijos
-const datasets = datos.map(item => ({
-    label: item.actividad, // Nombre de la actividad en la leyenda
-    data: [item.total_reservas], // Se muestra como un solo dato
-    backgroundColor: coloresFijos[item.actividad], // Color fijo para cada actividad
-    borderWidth: 1
-}));
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+            color: white;
+        }
 
-// Configurar gráfico
-const ctx = document.getElementById('graficoActividades').getContext('2d');
-new Chart(ctx, {
-    type: 'bar',  // Tipo de gráfico
-    data: {
-        labels: ['Reservas'], // Se agrupa en una única barra con varias actividades
-        datasets: datasets // Se pasan los datasets generados dinámicamente
-    },
-    options: {
-        responsive: true,
-        scales: {
-            y: { 
-                beginAtZero: true,
-                max: topeEjeY // Aplica el nuevo tope del 5% superior
+        .btn-exit {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--sidebar-bg);
+            color: white;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-normal);
+            border: none;
+            z-index: 100;
+            font-size: 1.2rem;
+            text-decoration: none;
+        }
+
+        .btn-exit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15), 0 5px 5px rgba(0, 0, 0, 0.12);
+            background-color: #b91c1c;
+            color: white;
+        }
+
+        /* Toggle Dark/Light Mode */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+            border: none;
+            font-size: 1.2rem;
+            transition: var(--transition-normal);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15), 0 5px 5px rgba(0, 0, 0, 0.12);
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Reducir min-width para más tarjetas por fila */
+            gap: 1.5rem; /* Aumentar espacio entre tarjetas */
+            margin-bottom: 2.5rem; /* Aumentar margen inferior */
+            padding: 0.5rem; /* Agregar padding */
+        }
+
+        .stats-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem; /* Aumentar padding */
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+            min-height: 120px; /* Establecer altura mínima */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stats-number {
+            font-size: 2rem; /* Aumentar tamaño */
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.8rem; /* Aumentar margen */
+        }
+
+        .stats-label {
+            font-size: 1rem; /* Aumentar tamaño */
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Estilo específico para Chart.js en modo oscuro */
+        [data-theme="dark"] .chart-container canvas {
+            filter: invert(0.8) hue-rotate(180deg);
+        }
+
+        /* Media queries para pantallas más grandes */
+        @media (min-width: 1400px) {
+            .chart-container {
+                height: 550px;
+                max-width: 1300px;
             }
-        },
-        plugins: {
-            legend: {
-                display: true, // Muestra la leyenda con los colores generados
-                position: 'top' // Puedes cambiarlo a 'bottom', 'left' o 'right'
+            
+            .stats-summary {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             }
         }
-    }
-});
+    </style>
+</head>
+<body>
+    <!-- Botón de salida -->
+    <a href="/menu-estadistica-hotel/<%= hotelId %>" class="btn-exit" title="Volver al menú">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    
+    <div class="container mt-5">
+        <div class="card">
+            <div class="text-center">
+                <h1 class="card-title">
+                    <i class="bx bx-bar-chart-alt-2 me-2"></i>Estadísticas de Actividades
+                </h1>
+                
+           
+            </div>
+            
+            <div id="statsSummary" class="stats-summary">
+                <!-- Se llenará dinámicamente con JavaScript -->
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="graficoActividades"></canvas>
+            </div>
+            
+            <div class="text-center">
+                <a href="/menu-estadistica-hotel/<%= hotelId %>" class="btn-back">
+                    <i class="bx bx-arrow-back"></i>
+                    Volver al Menú
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Botón para cambiar tema -->
+    <button class="theme-toggle" id="themeToggle">
+        <i class="bx bx-moon"></i>
+    </button>
 
+    <script>
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            
+            // Cambiar el icono
+            this.querySelector('i').classList.toggle('bx-moon');
+            this.querySelector('i').classList.toggle('bx-sun');
+            
+            // Guardar preferencia en localStorage
+            localStorage.setItem('theme', newTheme);
+            
+            // Actualizar el gráfico
+            actualizarGrafico();
+        });
+        
+        // Cargar tema guardado
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            // Actualizar icono según tema
+            if (savedTheme === 'dark') {
+                document.querySelector('#themeToggle i').classList.remove('bx-moon');
+                document.querySelector('#themeToggle i').classList.add('bx-sun');
+            }
+        });
+        
+        // Datos enviados desde Node.js
+        const datos = JSON.parse('<%- JSON.stringify(datos) %>');
+        
+        // Almacén de colores fijos por actividad
+        const coloresFijos = JSON.parse(localStorage.getItem('coloresActividades')) || {};
+        
+        // Función para generar colores aleatorios en formato hexadecimal
+        function generarColorAleatorio() {
+            return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+        }
+        
+        // Asignar colores fijos a cada actividad
+        datos.forEach(item => {
+            if (!coloresFijos[item.actividad]) {
+                coloresFijos[item.actividad] = generarColorAleatorio();
+            }
+        });
+        
+        // Guardar en localStorage para persistencia
+        localStorage.setItem('coloresActividades', JSON.stringify(coloresFijos));
+        
+        // Llenar el resumen de estadísticas
+        const statsSummary = document.getElementById('statsSummary');
+        const totalReservas = datos.reduce((acc, item) => acc + parseInt(item.total_reservas), 0);
+        
+        // Crear tarjeta para total de reservas
+        const totalCard = document.createElement('div');
+        totalCard.className = 'stats-card';
+        totalCard.style.borderLeftColor = '#3b82f6';
+        totalCard.innerHTML = `
+            <div class="stats-number">${totalReservas}</div>
+            <div class="stats-label">Total Reservas</div>
+        `;
+        statsSummary.appendChild(totalCard);
+        
+        // Crear tarjetas para cada actividad
+        datos.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'stats-card';
+            card.style.borderLeftColor = coloresFijos[item.actividad];
+            card.innerHTML = `
+                <div class="stats-number">${item.total_reservas}</div>
+                <div class="stats-label">${item.actividad}</div>
+            `;
+            statsSummary.appendChild(card);
+        });
+        
+        // Función para actualizar el gráfico (se llamará al cambiar el tema)
+        function actualizarGrafico() {
+            // Extraer etiquetas (actividades) y valores (cantidad de reservas)
+            const etiquetas = datos.map(item => item.actividad);
+            const valores = datos.map(item => item.total_reservas);
+            
+            // Calcular el máximo y aumentarlo en un 50%
+            const maximoReservas = Math.max(...valores);
+            const topeEjeY = Math.ceil(maximoReservas * 1.5);
+            
+            // Crear datasets individuales para cada actividad con colores fijos
+            const datasets = datos.map(item => ({
+                label: item.actividad,
+                data: [item.total_reservas],
+                backgroundColor: coloresFijos[item.actividad],
+                borderColor: coloresFijos[item.actividad],
+                borderWidth: 1
+            }));
+            
+            // Configurar gráfico
+            const ctx = document.getElementById('graficoActividades').getContext('2d');
+            
+            // Destruir gráfico anterior si existe
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+            
+            // Crear nuevo gráfico
+            window.myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Reservas de Actividades'],
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: topeEjeY,
+                            grid: {
+                                color: document.documentElement.getAttribute('data-theme') === 'dark' 
+                                    ? 'rgba(255, 255, 255, 0.1)' 
+                                    : 'rgba(0, 0, 0, 0.1)'
+                            },
+                            ticks: {
+                                color: document.documentElement.getAttribute('data-theme') === 'dark'
+                                    ? '#f8fafc'
+                                    : '#2d3748',
+                                font: {
+                                    size: 14 // Aumentar tamaño de fuente
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: document.documentElement.getAttribute('data-theme') === 'dark' 
+                                    ? 'rgba(255, 255, 255, 0.1)' 
+                                    : 'rgba(0, 0, 0, 0.1)'
+                            },
+                            ticks: {
+                                color: document.documentElement.getAttribute('data-theme') === 'dark'
+                                    ? '#f8fafc'
+                                    : '#2d3748',
+                                font: {
+                                    size: 14 // Aumentar tamaño de fuente
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                color: document.documentElement.getAttribute('data-theme') === 'dark'
+                                    ? '#f8fafc'
+                                    : '#2d3748',
+                                font: {
+                                    family: "'Segoe UI', sans-serif",
+                                    size: 14, // Aumentar tamaño de fuente
+                                    weight: 'bold'
+                                },
+                                padding: 20,
+                                boxWidth: 15,
+                                boxHeight: 15
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: document.documentElement.getAttribute('data-theme') === 'dark'
+                                ? 'rgba(15, 23, 42, 0.8)'
+                                : 'rgba(255, 255, 255, 0.9)',
+                            titleColor: document.documentElement.getAttribute('data-theme') === 'dark'
+                                ? '#f8fafc'
+                                : '#2d3748',
+                            bodyColor: document.documentElement.getAttribute('data-theme') === 'dark'
+                                ? '#e2e8f0'
+                                : '#4b5563',
+                            titleFont: {
+                                family: "'Segoe UI', sans-serif",
+                                size: 16, // Aumentar tamaño
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                family: "'Segoe UI', sans-serif",
+                                size: 14 // Aumentar tamaño
+                            },
+                            padding: 12,
+                            cornerRadius: 8,
+                            boxPadding: 6
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            left: 20,
+                            right: 20,
+                            top: 20,
+                            bottom: 20
+                        }
+                    },
+                    // Configuración para las barras
+                    barPercentage: 0.7,     // Ancho de barra como porcentaje del espacio disponible (0-1)
+                    categoryPercentage: 0.6, // Ancho de la categoría como porcentaje (0-1)
+                    // barThickness: 40,     // Ancho fijo en píxeles (menos que antes)
+                    maxBarThickness: 60,     // Ancho máximo de barra en píxeles
+                    // Aumentar espacio entre barras
+                    borderWidth: 1,          // Borde para mejor visibilidad
+                    borderRadius: 6          // Bordes redondeados para las barras
+                }
+            });
+        }
+        
+        // Inicializar gráfico
+        document.addEventListener('DOMContentLoaded', actualizarGrafico);
     </script>
-
 </body>
 </html>

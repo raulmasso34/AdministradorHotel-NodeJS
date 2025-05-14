@@ -1,26 +1,347 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estadísticas de Reservas por Mes</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- BoxIcons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            /* Light Theme */
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --primary-color: #4169E1; /* Azul real más brillante */
+            --secondary-color: #6C7BFF;
+            --accent-color: #62C6FF;
+            --border-color: #E2E8F0;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05);
+            --transition-normal: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme */
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #5E81F4;
+            --secondary-color: #7986CB;
+            --accent-color: #81D4FA;
+            --border-color: #2d2d2d;
+            --text-color: #f1f1f1;
+            --text-muted: #9e9e9e;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.2);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: var(--transition-normal);
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            width: 95%;
+            padding: 0 15px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            transition: var(--transition-normal);
+            padding: 2rem !important;
+        }
+
+        .page-title {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .page-title i {
+            font-size: 1.8rem;
+        }
+
+        .hotel-id-badge {
+            background-color: #f1f5ff;
+            border-radius: 8px;
+            padding: 8px 16px;
+            display: inline-block;
+            margin: 0 auto 2rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            border: none;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.95rem;
+        }
+
+        /* Estilo para las tarjetas de estadísticas */
+        .month-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .month-card {
+            flex: 1 1 180px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 140px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            border-top-width: 0;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .month-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .month-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .month-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+        }
+
+        /* Estilo para el contenedor del gráfico */
+        .chart-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+            height: 400px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Estilo para la leyenda personalizada */
+        .custom-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.02);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            background-color: var(--card-bg);
+            padding: 8px 15px;
+            border-radius: 50px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s;
+        }
+
+        .legend-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .color-circle {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+        }
+
+        .month-name {
+            font-weight: 500;
+        }
+
+        /* Botón de volver */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            gap: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            margin-top: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Toggle Dark/Light Mode */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+            border: none;
+            font-size: 1.2rem;
+            transition: var(--transition-normal);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Media queries para pantallas más grandes */
+        @media (min-width: 992px) {
+            .month-card {
+                flex: 1 1 200px;
+            }
+            
+            .chart-container {
+                height: 450px;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .chart-container {
+                height: 500px;
+            }
+        }
+    </style>
 </head>
-<body class="bg-light">
-
+<body>
+    <!-- Botón de retroceso -->
+    <a href="/menu-estadistica-hotel/<%= hotelId %>" class="back-button" title="Volver al menú" style="position: fixed; top: 20px; left: 20px; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: var(--primary-color); color: white; box-shadow: var(--shadow-md); transition: var(--transition-normal); border: none; z-index: 100; font-size: 1.2rem; text-decoration: none; margin: 0; padding: 0;">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    
     <div class="container mt-5">
-        <div class="card shadow-lg p-4">
-            <h2 class="text-center mb-4">📊 Estadísticas de Reservas por Mes</h2>
-            <p class="text-center">ID del Hotel: <strong><%= hotelId %></strong></p>
-            <div id="leyendaMeses" style="text-align: center; margin-top: 20px;"></div>
-
-            <canvas id="graficoReservas"></canvas>
-
-            <a href="/menu-estadistica-hotel/<%= hotelId %>" class="btn btn-secondary mt-3">⬅️ Volver al Menú</a>
+        <div class="card p-4">
+            <div class="text-center">
+                <h1 class="page-title">
+                    <i class="bx bx-line-chart"></i> Estadísticas de Reservas por Mes
+                </h1>
+                
+              
+            </div>
+            
+            <div id="monthCards" class="month-cards">
+                <!-- Se llenará dinámicamente con JavaScript -->
+            </div>
+            
+            <div id="leyendaMeses" class="custom-legend mb-4">
+                <!-- Se llenará dinámicamente con JavaScript -->
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="graficoReservas"></canvas>
+            </div>
+            
+            <div class="text-center">
+                <a href="/menu-estadistica-hotel/<%= hotelId %>" class="back-button">
+                    <i class="bx bx-arrow-back"></i>
+                    Volver al Menú
+                </a>
+            </div>
         </div>
     </div>
+    
+    <!-- Botón para cambiar tema -->
+    <button class="theme-toggle" id="themeToggle">
+        <i class="bx bx-moon"></i>
+    </button>
+
     <script>
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            
+            // Cambiar el icono
+            this.querySelector('i').classList.toggle('bx-moon');
+            this.querySelector('i').classList.toggle('bx-sun');
+            
+            // Guardar preferencia en localStorage
+            localStorage.setItem('theme', newTheme);
+            
+            // Actualizar el gráfico
+            actualizarGrafico();
+        });
+        
+        // Cargar tema guardado
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            // Actualizar icono según tema
+            if (savedTheme === 'dark') {
+                document.querySelector('#themeToggle i').classList.remove('bx-moon');
+                document.querySelector('#themeToggle i').classList.add('bx-sun');
+            }
+        });
+        
         // Datos enviados desde Node.js
         const datos = JSON.parse('<%- JSON.stringify(datos) %>'); // No tocar, funciona aunque dé error
         
@@ -32,13 +353,13 @@
         
         // Función para generar colores aleatorios en formato hexadecimal
         function generarColorAleatorio() {
-            return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+            return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
         }
         
         // Asignar colores fijos a cada mes
         for (let i = 0; i < meses.length; i++) {
             if (!coloresFijos[meses[i]]) {
-                coloresFijos[meses[i]] = generarColorAleatorio();  // Si no existe el color para el mes, lo generamos
+                coloresFijos[meses[i]] = generarColorAleatorio(); // Si no existe el color para el mes, lo generamos
             }
         }
         
@@ -46,7 +367,7 @@
         localStorage.setItem('coloresMeses', JSON.stringify(coloresFijos));
         
         // Extraer etiquetas (meses) y valores (cantidad de reservas)
-        const etiquetas = datos.map(item => meses[item.mes - 1]);  // Convertir el número de mes a nombre
+        const etiquetas = datos.map(item => meses[item.mes - 1]); // Convertir el número de mes a nombre
         const valores = datos.map(item => item.total_reservas);
         
         // Generar un color para cada barra (mes)
@@ -56,59 +377,64 @@
         const maximoReservas = Math.max(...valores);
         const topeEjeY = Math.ceil(maximoReservas * 1.05); // Aumenta un 5% y redondea hacia arriba
         
-        // Crear el gráfico
-        const ctx = document.getElementById('graficoReservas').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',  // Tipo de gráfico
-            data: {
-                labels: etiquetas, // Los meses en el eje X
-                datasets: [{
-                    label: 'Reservas por Mes',
-                    data: valores, // Datos de cantidad de reservas
-                    backgroundColor: coloresMeses,  // Color fijo para cada mes
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: { 
-                        beginAtZero: true,
-                        max: topeEjeY // Aplica el nuevo tope del 5% superior
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false // Desactivar leyenda ya que cada barra tiene su color
-                    }
-                }
-            }
-        });
+        // Función para crear tarjetas para cada mes
+        function crearTarjetasMeses() {
+            const monthContainer = document.getElementById('monthCards');
+            if (!monthContainer) return;
+            
+            monthContainer.innerHTML = ''; // Limpiar contenedor
+            
+            // Calcular total de reservas
+            const totalReservas = valores.reduce((sum, val) => sum + val, 0);
+            
+            // Crear tarjeta para el total
+            const totalCard = document.createElement('div');
+            totalCard.className = 'month-card';
+            totalCard.innerHTML = `
+                <div class="month-number" style="color: var(--primary-color);">${totalReservas}</div>
+                <div class="month-label">TOTAL RESERVAS</div>
+            `;
+            totalCard.style.borderTop = '5px solid var(--primary-color)';
+            monthContainer.appendChild(totalCard);
+            
+            // Crear tarjetas para cada mes con datos
+            datos.forEach((item, index) => {
+                const mesNombre = meses[item.mes - 1];
+                const color = coloresFijos[mesNombre];
+                
+                const card = document.createElement('div');
+                card.className = 'month-card';
+                
+                card.innerHTML = `
+                    <div class="month-number" style="color: ${color};">${item.total_reservas}</div>
+                    <div class="month-label">${mesNombre}</div>
+                `;
+                
+                card.style.borderTop = `5px solid ${color}`;
+                monthContainer.appendChild(card);
+            });
+        }
         
-        // Función para mostrar la leyenda de colores por mes en la parte superior
+        // Función para mostrar la leyenda de colores por mes
         function mostrarLeyenda() {
             const leyendaContainer = document.getElementById('leyendaMeses');
             leyendaContainer.innerHTML = ''; // Limpiar cualquier leyenda previa
-        
+            
             etiquetas.forEach(mes => {
                 const color = coloresFijos[mes];
                 const leyendaItem = document.createElement('div');
-                leyendaItem.style.display = 'inline-block';
-                leyendaItem.style.marginRight = '15px';
-        
+                leyendaItem.className = 'legend-item';
+                
                 // Crear un círculo de color para cada mes
                 const colorCirculo = document.createElement('span');
-                colorCirculo.style.display = 'inline-block';
-                colorCirculo.style.width = '15px';
-                colorCirculo.style.height = '15px';
+                colorCirculo.className = 'color-circle';
                 colorCirculo.style.backgroundColor = color;
-                colorCirculo.style.borderRadius = '50%';
-                colorCirculo.style.marginRight = '5px';
-        
+                
                 // Crear el nombre del mes
                 const mesNombre = document.createElement('span');
+                mesNombre.className = 'month-name';
                 mesNombre.textContent = mes;
-        
+                
                 // Añadir los elementos al contenedor de leyenda
                 leyendaItem.appendChild(colorCirculo);
                 leyendaItem.appendChild(mesNombre);
@@ -116,11 +442,107 @@
             });
         }
         
-        // Llamar a la función para mostrar la leyenda
-        mostrarLeyenda();
+        // Función para actualizar el gráfico
+        function actualizarGrafico() {
+            // Configurar gráfico
+            const ctx = document.getElementById('graficoReservas').getContext('2d');
+            
+            // Destruir gráfico anterior si existe
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+            
+            // Crear nuevo gráfico
+            window.myChart = new Chart(ctx, {
+                type: 'bar', // Tipo de gráfico
+                data: {
+                    labels: etiquetas, // Los meses en el eje X
+                    datasets: [{
+                        label: 'Reservas por Mes',
+                        data: valores, // Datos de cantidad de reservas
+                        backgroundColor: coloresMeses, // Color fijo para cada mes
+                        borderColor: coloresMeses,
+                        borderWidth: 0,
+                        borderRadius: 6 // Bordes redondeados
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: topeEjeY, // Aplica el nuevo tope del 5% superior
+                            grid: {
+                                color: document.documentElement.getAttribute('data-theme') === 'dark' 
+                                    ? 'rgba(255, 255, 255, 0.1)' 
+                                    : 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                color: document.documentElement.getAttribute('data-theme') === 'dark'
+                                    ? '#f8fafc'
+                                    : '#2d3748',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: document.documentElement.getAttribute('data-theme') === 'dark'
+                                    ? '#f8fafc'
+                                    : '#2d3748',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // Desactivar leyenda ya que cada barra tiene su color
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#333',
+                            bodyColor: '#666',
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            padding: 10,
+                            cornerRadius: 6,
+                            displayColors: true
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            left: 20,
+                            right: 20,
+                            top: 20,
+                            bottom: 20
+                        }
+                    },
+                    // Configuración para las barras
+                    barPercentage: 0.7,
+                    categoryPercentage: 0.6,
+                    maxBarThickness: 60
+                }
+            });
+        }
         
-        </script>
-
-
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            crearTarjetasMeses();
+            mostrarLeyenda();
+            actualizarGrafico();
+        });
+    </script>
 </body>
 </html>
