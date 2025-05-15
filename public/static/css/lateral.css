@@ -1,0 +1,66 @@
+ /* Estilos para el submenú horizontal */
+ .submenu {
+    position: absolute;
+    left: 100%; /* Aparece al lado del menú principal */
+    top: 0;
+    width: 200px;
+    background-color: #1e3d59; /* Color específico solicitado */
+    display: none;
+    z-index: 1000;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 0 4px 4px 0;
+}
+
+/* Mostrar submenu al hacer hover */
+.menu-item-container {
+    position: relative;
+}
+
+.menu-item-container:hover .submenu {
+    display: block;
+}
+
+.submenu-item {
+    display: block;
+    padding: 12px 20px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.submenu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+/* Estilos para los contenedores de acciones */
+.action-buttons-container {
+    display: flex;
+    gap: 5px; /* Espacio uniforme entre botones */
+    min-height: 38px; /* Altura mínima para evitar saltos */
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* Tema oscuro */
+[data-theme="dark"] body {
+    background-color: #141428;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .admin-sidebar {
+    background-color: #121220;
+}
+
+[data-theme="dark"] .submenu {
+    background-color: #1e3d59; /* Mantener el color específico en modo oscuro */
+}
+
+[data-theme="dark"] .card {
+    background-color: #1e1e2f;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .table {
+    color: #e0e0e0;
+}

@@ -4,77 +4,391 @@
     <!-- Meta y Bootstrap -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="../../public/static/css/habitaciones.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/index.css">
-
-    <!-- DataTables -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.bootstrap5.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.bootstrap5.css">
+    
     <title>Habitaciones</title>
+    
+    <style>
+        :root {
+            --primary-color: #0d47a1; /* Azul fuerte como color principal */
+            --primary-hover: #0a3885;
+            --secondary-color: #90caf9;
+            --accent-color: #1976d2;
+            --light-bg: #f8f9fa;
+            --dark-bg: #263238;
+            --text-light: #ffffff;
+            --text-dark: #212529;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-color: #e9ecef;
+            --table-stripe-bg: rgba(13, 71, 161, 0.03);
+            --card-bg: #ffffff;
+            --hover-bg: #f8f9fa;
+            --input-bg: #ffffff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--text-dark);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        [data-theme="dark"] {
+            --light-bg: #1e1e2f;
+            --dark-bg: #141428;
+            --text-light: #ffffff;
+            --text-dark: #e0e0e0;
+            --border-color: #373751;
+            --input-bg: #2d2d44;
+            --table-stripe-bg: #22223a;
+            --card-bg: #1e1e2f;
+            --hover-bg: #2a2a40;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+        }
+        
+        .navbar {
+            background-color: var(--primary-color) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 0.8rem 1.5rem;
+        }
+        
+        .navbar-brand, .nav-link {
+            color: var(--text-light) !important;
+            font-size: 1.1rem;
+        }
+        
+        .hotel-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .hotel-header h1 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 2.2rem;
+        }
+        
+        .action-btn {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .btn-add {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+        
+        .btn-add:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+        
+        .card {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            background-color: var(--card-bg);
+            transition: background-color 0.3s ease;
+        }
+        
+        table.dataTable {
+            border-collapse: collapse !important;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+        
+        .table th {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            border: none !important;
+            padding: 15px 10px;
+        }
+        
+        .table td {
+            vertical-align: middle;
+            padding: 12px 10px;
+            border-color: var(--border-color);
+            transition: border-color 0.3s ease;
+        }
+        
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: var(--table-stripe-bg);
+            transition: background-color 0.3s ease;
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: var(--hover-bg);
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn-action {
+            margin: 0 3px;
+            border-radius: 6px;
+            padding: 6px 12px;
+            transition: all 0.2s;
+        }
+        
+        .btn-warning {
+            background-color: #FF9800;
+            border-color: #FF9800;
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: #f44336;
+            border-color: #f44336;
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            margin: 0 5px;
+            border: 1px solid #ddd !important;
+            border-radius: 4px !important;
+            padding: 5px 12px !important;
+            background: white !important;
+            color: var(--primary-color) !important;
+            cursor: pointer;
+        }
+        
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: var(--primary-color) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 4px !important;
+        }
+        
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+            background: #f0f0f0 !important;
+            color: var(--primary-hover) !important;
+            border-color: #ccc !important;
+        }
+        
+        .dataTables_wrapper .dataTables_filter input {
+            border-radius: 20px;
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background-color: var(--input-bg);
+            color: var(--text-dark);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        [data-theme="dark"] .dataTables_wrapper .dataTables_filter input {
+            border-color: var(--border-color);
+        }
+        
+        [data-theme="dark"] .dataTables_info,
+        [data-theme="dark"] .dataTables_length label,
+        [data-theme="dark"] .dataTables_filter label {
+            color: #b8b8d9;
+        }
+        
+        [data-theme="dark"] .paginate_button {
+            color: #b8b8d9 !important;
+            border-color: var(--border-color) !important;
+            background-color: var(--card-bg) !important;
+        }
+        
+        [data-theme="dark"] .paginate_button.disabled {
+            color: #656587 !important;
+        }
+        
+        /* Price column styling */
+        .price-column {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        [data-theme="dark"] .price-column {
+            color: #90caf9;
+        }
+        
+        /* Badge styling for room types */
+        .badge-room-type {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        
+        .badge-individual {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+        }
+        
+        .badge-doble {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .badge-suite {
+            background-color: #fff8e1;
+            color: #ff8f00;
+        }
+        
+        [data-theme="dark"] .badge-room-type {
+            opacity: 0.9;
+        }
+        
+        /* Floating theme toggle button */
+        .floating-theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .floating-theme-toggle:hover {
+            transform: rotate(30deg);
+        }
+        
+        /* Custom transition effects */
+        .table, .card, .btn, .badge-room-type {
+            transition: all 0.3s ease;
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <% if (user && user.role === 'Hotel') { %>
-                <a class="nav-link active" href="/hotel/<%= user.id_hotel %>"><i class="fa-solid fa-person-walking-arrow-loop-left"></i></a>
+                <a class="nav-link" href="/hotel/<%= user.id_hotel %>">
+                    <i class="fa-solid fa-arrow-left me-2"></i>Volver al panel
+                </a>
             <% } else if (user && user.role === 'General') { %>
-                <a class="navbar-brand" href="/hoteles/"><i class="fa-solid fa-person-walking-arrow-loop-left"></i></a> %>
+                <a class="navbar-brand" href="/hoteles/">
+                    <i class="fa-solid fa-arrow-left me-2"></i>Volver a hoteles
+                </a>
             <% } %>
- 
+            
+            <div class="ms-auto">
+                <span class="navbar-text text-white">
+                    <i class="fa-solid fa-hotel me-2"></i>Gestión de Habitaciones
+                </span>
+            </div>
         </div>
     </nav>
 
     <!-- Contenido principal -->
-    <div class="container mt-5">
-        <center><h1><%= NombreHotel %></h1></center>
-
-        <!-- Botón "Agregar Habitación" alineado a la derecha -->
-        <div class="d-flex justify-content-start my-3">
-            <a href="/createhab/<%= Id_Hotel %>" class="btn btn-outline-primary">
-                <i class="fa-solid fa-plus"></i> 
-            </a>
+    <div class="container mt-4">
+        <!-- Header con nombre del hotel -->
+        <div class="hotel-header text-center mb-4">
+            <h1><i class="fa-solid fa-building me-3"></i><%= NombreHotel %></h1>
         </div>
-
-        <!-- Tabla de habitaciones -->
-        <div class="table-responsive">
-            <table id="habitaciones" class="table table-striped table-bordered text-center">
-                <thead class="bg-primary text-white">
-                    <tr>
-                        <th>ID</th>
-                        <th>N° Habitación</th>
-                        <th>Tipo</th>
-                        <th>Capacidad</th>
-                        <th>Precio</th>
-                        <th>Hotel</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% results.forEach((habitacion) => { %>
-                        <tr>
-                            <td><%= habitacion.Id_Habitaciones %></td>
-                            <td><%= habitacion.Numero_Habitacion %></td>
-                            <td><%= habitacion.Tipo %></td>
-                            <td><%= habitacion.Capacidad %></td>
-                            <td><%= habitacion.Precio %></td>
-                            <td><%= habitacion.Nombre %></td>
-                            <td>
-                                <a href="/edithab/<%= habitacion.Id_Habitaciones %>" class="btn btn-sm btn-warning" title="Editar">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </a>
-                                <a onclick="confirmar('<%= habitacion.Id_Habitaciones %>')" class="btn btn-sm btn-danger" title="Eliminar">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    <% }) %>
-                </tbody>
-            </table>
+        
+        <!-- Contenedor de la tarjeta principal -->
+        <div class="card mb-4">
+            <div class="card-body py-4">
+                <!-- Botón "Agregar Habitación" con diseño mejorado -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0"><i class="fa-solid fa-bed me-2"></i>Listado de Habitaciones</h4>
+                    <a href="/createhab/<%= Id_Hotel %>" class="btn btn-add action-btn" title="Agregar nueva habitación">
+                        <i class="fa-solid fa-plus"></i>
+                    </a>
+                </div>
+                
+                <!-- Tabla de habitaciones mejorada -->
+                <div class="table-responsive">
+                    <table id="habitaciones" class="table table-striped table-hover text-center">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>N° Habitación</th>
+                                <th>Tipo</th>
+                                <th>Capacidad</th>
+                                <th>Precio</th>
+                                <th>Hotel</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% results.forEach((habitacion) => { %>
+                                <tr>
+                                    <td><%= habitacion.Id_Habitaciones %></td>
+                                    <td>
+                                        <strong class="fw-bold"><%= habitacion.Numero_Habitacion %></strong>
+                                    </td>
+                                    <td>
+                                        <% let badgeClass = "badge-individual"; %>
+                                        <% if(habitacion.Tipo.toLowerCase().includes("doble")) { %>
+                                            <% badgeClass = "badge-doble"; %>
+                                        <% } else if(habitacion.Tipo.toLowerCase().includes("suite")) { %>
+                                            <% badgeClass = "badge-suite"; %>
+                                        <% } %>
+                                        <span class="badge-room-type <%= badgeClass %>"><%= habitacion.Tipo %></span>
+                                    </td>
+                                    <td>
+                                        <i class="fa-solid fa-user me-1"></i> <%= habitacion.Capacidad %>
+                                    </td>
+                                    <td class="price-column">
+                                        <%= habitacion.Precio %>€
+                                    </td>
+                                    <td><%= habitacion.Nombre %></td>
+                                    <td>
+                                        <div class="d-flex justify-content-center">
+                                            <a href="/edithab/<%= habitacion.Id_Habitaciones %>" class="btn btn-warning btn-action me-2" title="Editar">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </a>
+                                            <button onclick="confirmar('<%= habitacion.Id_Habitaciones %>')" class="btn btn-danger btn-action" title="Eliminar">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
+    
+    <!-- Botón flotante para cambiar tema -->
+
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -84,95 +398,117 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.14.0/dist/sweetalert2.all.min.js"></script>
 
     <script>
-        // Inicializar DataTable
-        new DataTable('#habitaciones');
+        // Inicializar DataTable con opciones mejoradas y traducciones directas
+        new DataTable('#habitaciones', {
+            language: {
+                processing: "Procesando...",
+                search: "Buscar:",
+                lengthMenu: "Mostrar _MENU_ elementos",
+                info: "Mostrando _START_ a _END_ de _TOTAL_ elementos",
+                infoEmpty: "Mostrando 0 a 0 de 0 elementos",
+                infoFiltered: "(filtrado de _MAX_ elementos en total)",
+                infoPostFix: "",
+                loadingRecords: "Cargando...",
+                zeroRecords: "No se encontraron coincidencias",
+                emptyTable: "No hay datos disponibles en la tabla",
+                paginate: {
+                    first: "Primero",
+                    previous: "Anterior",
+                    next: "Siguiente",
+                    last: "Último"
+                },
+                aria: {
+                    sortAscending: ": activar para ordenar la columna en orden ascendente",
+                    sortDescending: ": activar para ordenar la columna en orden descendente"
+                }
+            },
+            responsive: true,
+            pageLength: 10,
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
+            dom: '<"top d-flex justify-content-between align-items-center mb-4"lf>rt<"bottom"ip>',
+            order: [[1, 'asc']],
+            pagingType: 'simple_numbers' // Usar paginación estándar
+        });
 
-        // Confirmar eliminación
+        // Confirmar eliminación con SweetAlert2 mejorado
         function confirmar(Id_Habitaciones) {
+            // Detectar si estamos en modo oscuro
+            const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+            
             Swal.fire({
-                title: "¿Quieres eliminar la habitación?",
+                title: "¿Estás seguro?",
+                text: "¿Quieres eliminar la habitación con ID " + Id_Habitaciones + "?",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
+                confirmButtonColor: '#0d47a1',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Confirmar'
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                backdrop: `rgba(0,0,0,0.4)`,
+                customClass: {
+                    confirmButton: 'btn btn-primary btn-lg',
+                    cancelButton: 'btn btn-danger btn-lg'
+                },
+                buttonsStyling: false,
+                background: isDarkMode ? '#1e1e2f' : '#fff',
+                color: isDarkMode ? '#dcdcf0' : '#333'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire("Eliminado!", "La habitación con ID " + Id_Habitaciones + " ha sido eliminada.", "success").then(() => {
+                    Swal.fire({
+                        title: "¡Eliminado!",
+                        text: "La habitación con ID " + Id_Habitaciones + " ha sido eliminada.",
+                        icon: "success",
+                        confirmButtonColor: '#0d47a1',
+                        customClass: {
+                            confirmButton: 'btn btn-primary btn-lg'
+                        },
+                        buttonsStyling: false,
+                        background: isDarkMode ? '#1e1e2f' : '#fff',
+                        color: isDarkMode ? '#dcdcf0' : '#333'
+                    }).then(() => {
                         window.location.href = '/deletehab/' + Id_Habitaciones;
                     });
-                } else {
-                    Swal.fire("Acción cancelada", "", "info");
-                }
-            });
-        }
-    </script>
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.bootstrap5.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.14.0/dist/sweetalert2.all.min.js"></script>
-    <link rel="stylesheet" href="/static/js/dark.js">
-    <script>
-        function confirmar(Id_Client) {
-            Swal.fire({
-                title: "¿Quieres eliminar el cliente?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Confirmar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire("Eliminado!", "El cliente con ID " + Id_Client + " ha sido eliminado.", "success").then(() => {
-                        window.location.href = '/delete/' + Id_Client;
-                    });
-                } else {
-                    Swal.fire("Acción cancelada", "", "info");
                 }
             });
         }
 
-        // Inicializar DataTable
-        const table = new DataTable('#users');
+        // Script para cambio de tema
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.documentElement;
+            
+            // Cargar tema guardado o detectar preferencia del sistema
+            const savedTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            body.setAttribute('data-theme', savedTheme);
+            updateToggleIcon(savedTheme);
 
-        // Toggle password
-        $('#users tbody').on('click', '.toggle-password', function () {
-            const passwordSpan = $(this).prev('.password-hidden');
-            const isHidden = passwordSpan.text() === '********';
-            passwordSpan.text(isHidden ? $(this).data('password') : '********');
-            $(this).html(isHidden ? '<i class="fa-solid fa-eye-slash"></i>' : '<i class="fa-solid fa-eye"></i>');
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                
+                body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateToggleIcon(newTheme);
+                
+                // Actualizar el tema en SweetAlert2 si está abierto
+                const sweetAlertContainer = document.querySelector('.swal2-container');
+                if (sweetAlertContainer) {
+                    const sweetAlertModal = document.querySelector('.swal2-popup');
+                    if (sweetAlertModal) {
+                        sweetAlertModal.style.background = newTheme === 'dark' ? '#1e1e2f' : '#fff';
+                        sweetAlertModal.style.color = newTheme === 'dark' ? '#dcdcf0' : '#333';
+                    }
+                }
+            });
+
+            function updateToggleIcon(theme) {
+                const icon = themeToggle.querySelector('i');
+                icon.className = theme === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+                themeToggle.title = theme === 'light' ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro';
+            }
         });
     </script>
-
-    <script>// Añade este script COLOR DARK
-       document.addEventListener('DOMContentLoaded', function() {
-    const themeToggle = document.getElementById('themeToggle');
-    const body = document.documentElement;
-    
-    // Cargar tema guardado o detectar preferencia del sistema
-    const savedTheme = localStorage.getItem('theme') || 
-                      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    body.setAttribute('data-theme', savedTheme);
-    updateToggleIcon(savedTheme);
-
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = body.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        
-        body.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        updateToggleIcon(newTheme);
-    });
-
-    function updateToggleIcon(theme) {
-        const icon = themeToggle.querySelector('i');
-        icon.className = theme === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-        themeToggle.title = theme === 'light' ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro';
-    }
-});
-        
-        
-        </script>   
 </body>
 </html>
